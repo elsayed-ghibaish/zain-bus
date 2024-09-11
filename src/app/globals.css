@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Tajawal';
+}
+
+::selection {
+  color: white;
+  background: rgb(220 38 38);
+}
+
+@media print {
+  html {
+    direction: ltr;
+  }
+
+  body {
+    direction: rtl; /* منع تأثير transform على body */
+  }
+}
+
