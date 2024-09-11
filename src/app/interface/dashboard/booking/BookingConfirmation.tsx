@@ -680,19 +680,21 @@ export default function BookingConfirmation() {
                       {item.attributes.payment_status ? "مدفوعة" : "غير مدفوعة"}
                     </td>
                     <td className="print:hidden">
-                      <button
-                        onClick={() => PayBooking(item.id)}
-                        className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
-                      >
-                        <FaAmazonPay title="تحويل الى مدفوعة" />
-                      </button>
-
-                      <button
-                        onClick={() => UnPayBooking(item.id)}
-                        className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
-                      >
-                        <GiPayMoney title="تحويل الى غير مدفوعة" />
-                      </button>
+                      {!item.attributes.payment_status ? (
+                        <button
+                          onClick={() => PayBooking(item.id)}
+                          className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
+                        >
+                          <FaAmazonPay title="تحويل الى مدفوعة" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => UnPayBooking(item.id)}
+                          className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
+                        >
+                          <GiPayMoney title="تحويل الى غير مدفوعة" />
+                        </button>
+                      )}
 
                       <button
                         onClick={() => {
