@@ -157,6 +157,7 @@ export default function BookingUpdateUI(id: any) {
           start_time,
           trip_type,
           end_time,
+          seats,
           payment_type,
           trip_cost,
         },
