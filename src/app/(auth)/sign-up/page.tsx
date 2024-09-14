@@ -9,5 +9,5 @@ export const metadata: Metadata = {
     "تسجيل بيانات طالب جديد لتسهيل عملية الحجز والاستفادة من مميزات اخري",
 };
 export default function signup() {
-  return <SignUp />;
+  return <SignUpSoon />;
 }
