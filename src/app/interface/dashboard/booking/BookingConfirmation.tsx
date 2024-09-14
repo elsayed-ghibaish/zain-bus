@@ -623,10 +623,10 @@ export default function BookingConfirmation() {
                 <th className="w-14">م</th>
                 <th className="w-56">الاســـم / عدد المقاعد</th>
                 <th>نوع الرحلة</th>
-                <th>نهاية المحاضرات</th>
+                {/* <th>نهاية المحاضرات</th> */}
                 <th className="w-64">نقطة التحرك</th>
-                <th>نوع الدفع</th>
-                <th>حالة الدفع</th>
+                {/* <th>نوع الدفع</th> */}
+                {/* <th>حالة الدفع</th> */}
                 <th className="w-52 print:hidden">الاجراءات</th>
               </tr>
             </thead>
@@ -660,7 +660,7 @@ export default function BookingConfirmation() {
                       )}
                     </td>
                     <td>{item.attributes.trip_type}</td>
-                    <td>{item.attributes.end_time}</td>
+                    {/* <td>{item.attributes.end_time}</td> */}
 
                     <td className="text-sm">
                       {`${
@@ -669,8 +669,8 @@ export default function BookingConfirmation() {
                           : item.attributes.area
                       }`}
                     </td>
-                    <td>{item.attributes.payment_type}</td>
-                    <td
+                    {/* <td>{item.attributes.payment_type}</td> */}
+                    {/* <td
                       className={
                         item.attributes.payment_status
                           ? "text-green-500 font-semibold text-sm"
@@ -678,7 +678,7 @@ export default function BookingConfirmation() {
                       }
                     >
                       {item.attributes.payment_status ? "مدفوعة" : "غير مدفوعة"}
-                    </td>
+                    </td> */}
                     <td className="print:hidden">
                       {!item.attributes.payment_status ? (
                         <button

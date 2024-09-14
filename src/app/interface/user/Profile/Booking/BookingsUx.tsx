@@ -283,7 +283,7 @@ export default function BookingsUx({ Data }: any) {
 
   area == "الحسينية" || area == "أبو حماد"
   // التحقق إذا كان اليوم ليس السبت (6)، الأحد (0)، أو الاثنين (1)
-  if (![0, 1, 2].includes(currentDay) || trip_type !== "ذهاب") {
+  if (![0, 1, 2].includes(currentDay) || trip_type === "ذهاب") {
     return (
       <>
         <div className="sm:col-span-3">

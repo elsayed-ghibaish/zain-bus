@@ -1,0 +1,8 @@
+{
+  "/(auth)/profile/page": "app/(auth)/profile/page.js",
+  "/pages/booking-success/page": "app/pages/booking-success/page.js",
+  "/pages/booking-guest/page": "app/pages/booking-guest/page.js",
+  "/dashboard/booking-confirmation/page": "app/dashboard/booking-confirmation/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/dashboard/page": "app/dashboard/page.js"
+}
