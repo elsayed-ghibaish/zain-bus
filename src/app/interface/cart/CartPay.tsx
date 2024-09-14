@@ -14,6 +14,7 @@ import { MdMergeType } from "react-icons/md";
 import { IoBagHandle, IoLocationSharp } from "react-icons/io5";
 import { HiUsers } from "react-icons/hi";
 import axios from "axios";
+import { subDays } from "date-fns";
 
 const PaymentPage = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
@@ -390,6 +391,11 @@ const PaymentPage = () => {
     }`;
   };
 
+  const bookingday =
+    booking.date &&
+    format(subDays(parseISO(booking.date), 1), "eeee, d MMMM yyyy", {
+      locale: ar,
+    });
   return (
     <section className="bg-slate-100 flow-root">
       <div className="flex flex-col lg:flex-row justify-center items-start gap-5 m-3 lg:m-10">
@@ -424,16 +430,24 @@ const PaymentPage = () => {
               </div>
               {selectedPaymentMethod === "VodafoneCash" && (
                 <div className="mt-4">
-                  <div className="font-medium text-sm text-white mt-2 bg-gray-800 rounded-md p-5">
-                    <span>
-                      يرجى إرسال قيمة الحجز على الرقم (01040015600) مع إرفاق
-                      سكرين شوت للتحويل عبر واتساب لنفس الرقم.
-                    </span>
-                    <span className="block p-2">
-                      نود أن نلفت انتباهكم إلى ضرورة دفع تكلفة الرحلة خلال 3
-                      ساعات، وبحد أقصى قبل الساعة السادسة مساءً من اليوم السابق
-                      للرحلة، في حال عدم دفع تكلفة الرحلة، لن يتم تأكيد الحجز.
-                    </span>
+                  <div className="mt-4 p-6 bg-gradient-to-r from-yellow-100 to-yellow-200 border border-yellow-300 rounded-lg shadow-md">
+                    <p className="text-lg font-semibold text-gray-700">
+                      يرجى إرسال قيمة الحجز على الرقم
+                      <span className="text-yellow-600 font-bold">
+                        {" "}
+                        (01040015600){" "}
+                      </span>
+                      مع إرفاق سكرين شوت للتحويل عبر واتساب لنفس الرقم.
+                    </p>
+                    <p className="mt-3 text-base text-gray-700 leading-relaxed font-medium">
+                      يجب الدفع خلال 3 ساعات وبحد أقصى قبل الساعة السادسة مساء
+                      يوم
+                      <span className="text-yellow-700 font-semibold">
+                        {" "}
+                        {bookingday}{" "}
+                      </span>
+                      .
+                    </p>
                   </div>
                 </div>
               )}
@@ -540,7 +554,7 @@ const PaymentPage = () => {
               className={`${getBoxClasses("instapay")} bg-white`}
               // onClick={() => handlePaymentMethodChange("instapay")}
             >
-              <span className="text-red-600 font-bold text-2xl border-r-4 border-red-600 flex justify-center bg-slate-50 p-3 text-center mb-5">
+              <span className="text-red-600 font-bold text-2xl border-r-4 border-red-600 flex justify-center bg-slate-50 p-2 text-center mb-2">
                 قريبا
               </span>
               <div className="flex items-center space-x-4">
@@ -651,7 +665,15 @@ const PaymentPage = () => {
             {/* زر الدفع والإجمالي */}
 
             {/* زر الدفع */}
-            <div className="mt-10 flex justify-center">
+            
+            <div className="flex justify-center space-y-0">
+                <h3 className="text-xl text-red-600 font-bold inline">تكلفة الرحلة: <p className="inline">{booking.trip_cost} جنيهًا</p></h3>
+              </div>
+
+            <div className="flex justify-center">
+
+          
+
               <button
                 className={`${
                   !selectedPaymentMethod ? "mt-5" : ""
@@ -662,7 +684,7 @@ const PaymentPage = () => {
                 selectedPaymentMethod === "credit_card" ||
                 selectedPaymentMethod === "fawry"
                   ? "الدفع الآن"
-                  : "حجز الرحلة"}
+                  : "تأكيد الحجز"}
               </button>
             </div>
           </div>

@@ -59,10 +59,10 @@ export default function PaySuccess() {
           تم استلام طلبك بنجاح،
           <p>يرجى إتمام عملية الدفع لتأكيد الحجز</p>
         </h2>
-        <h2 className="text-xl text-center mt-6 text-gray-500">
+        {/* <h2 className="text-xl text-center mt-6 text-gray-500 flex w-96">
           يرجى إرسال قيمة الحجز على الرقم (01040015600) مع إرفاق سكرين شوت
           للتحويل عبر واتساب لنفس الرقم.
-        </h2>
+        </h2> */}
       </div>
 
       <div className="flex flex-col items-center justify-center px-5 mt-4">

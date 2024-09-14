@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from "@/app/redux/store";
 import { AreaData } from "@/app/redux/features/strapi-0/AreaSlice";
 import { BookingData } from "@/app/redux/features/strapi-0/BookingSlice";
 import { ControlData } from "@/app/redux/features/strapi-0/BookingControlsSlice";
+import { TiDeleteOutline } from "react-icons/ti";
 
 export default function BookingConfirmation() {
   const [data2, setData]: any = useState([]);
@@ -126,6 +127,20 @@ export default function BookingConfirmation() {
         );
         RcjSendWhatsapp(item);
         handleResponse(res, "تم إلغاء الحجز بنجاح", item.id, data2);
+        fetchData();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  // Delete
+
+  const DeleteBooking = async (item: any) => {
+    if (confirm("هل أنت متاكد من حذف الحجز")) {
+      try {
+        const res = await axios.delete(`${apiUrl}/bookings/${item.id}`);
+        handleResponse(res, "تم حذف الرحلة بنجاح", item.id, data2);
         fetchData();
       } catch (error) {
         console.error(error);
@@ -683,16 +698,16 @@ export default function BookingConfirmation() {
                       {!item.attributes.payment_status ? (
                         <button
                           onClick={() => PayBooking(item.id)}
-                          className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
+                          className="bg-red-500 text-white p-2 m-1 rounded hover:bg-red-600"
                         >
                           <FaAmazonPay title="تحويل الى مدفوعة" />
                         </button>
                       ) : (
                         <button
                           onClick={() => UnPayBooking(item.id)}
-                          className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
+                          className="bg-green-500 text-white p-2 m-1 rounded hover:bg-green-600"
                         >
-                          <GiPayMoney title="تحويل الى غير مدفوعة" />
+                          <FaAmazonPay title="تحويل الى غير مدفوعة" />
                         </button>
                       )}
 
@@ -716,6 +731,12 @@ export default function BookingConfirmation() {
                         className="bg-slate-100 text-white p-2 m-1 rounded hover:bg-slate-300"
                       >
                         <FcCancel />
+                      </button>
+                      <button
+                        onClick={() => DeleteBooking(item)}
+                        className="bg-red-600 text-white p-2 m-1 rounded hover:bg-red-700"
+                      >
+                        <TiDeleteOutline title="حذف" />
                       </button>
                     </td>
                   </tr>
