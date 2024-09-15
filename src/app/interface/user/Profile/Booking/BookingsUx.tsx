@@ -24,6 +24,7 @@ import {
 } from "date-fns";
 import { ar } from "date-fns/locale";
 import { PlaceTwo } from "@/app/api/PlaceTwo";
+import { AreaData } from "@/app/redux/features/strapi-0/AreaSlice";
 
 export default function BookingsUx({ Data }: any) {
   const router = useRouter();
@@ -34,6 +35,7 @@ export default function BookingsUx({ Data }: any) {
   const ControlsData: any = useSelector(
     (state: RootState) => state.BookingDashboard
   );
+  const AreasData = useSelector((state: RootState) => state.Area);
   const PlacesData: any = useSelector((state: RootState) => state.Place);
 
   const GetData = Data;
@@ -64,7 +66,8 @@ export default function BookingsUx({ Data }: any) {
   const [area_three, setArea_Three] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
+  const [selectedAreaData, setSelectedAreaData]: any = useState(null);
+  const [selectedArea, setSelectedArea] = useState(null);
   useEffect(() => {
     setStart_Point(UserData.data.start_point);
   }, []);
@@ -77,6 +80,7 @@ export default function BookingsUx({ Data }: any) {
       const fetchData = () => {
         dispatch(fetchUserMeData(userData));
         dispatch(BookingDashboardData({ token: userData, id }));
+        dispatch(AreaData());
         dispatch(PlaceData());
       };
       fetchData();
@@ -87,12 +91,29 @@ export default function BookingsUx({ Data }: any) {
     setPhone(UserData.data.phone_number);
     setEmail(UserData.data.email);
     setArea(UserData.data.area);
-    // setStart_Point(UserData.data.start_point);
+    setStart_Point(UserData.data.start_point);
     setDestination(UserData.data.university);
     setUser_id(UserData.data.id);
     setStart_time(GetDataMP?.attributes.timing[0]);
+  }, [session.user.token]);
+
+  useEffect(() => {
+    // ابحث عن بيانات المنطقة المحددة في القائمة
+    const selectedRegion = AreasData.data.find(
+      (area: any) => area.attributes.name === area
+    );
+    // ابحث عن بيانات المنطقة المحددة في القائمة
+    const selectedArea = AreasData.data.find(
+      (areas: any) => areas.attributes.name === area
+    );
+    if (selectedArea) {
+      // حدد البيانات المرتبطة بالمنطقة المحددة
+      setSelectedAreaData(selectedArea.attributes.places.data);
+    } else {
+      setSelectedAreaData(null); // قم بمسح البيانات إذا لم يتم اختيار منطقة
+    }
     GetCost();
-  }, [session.user.token, dispatch, trip_type, seats]);
+  }, [area, start_point, trip_type, seats]);
 
   // البحث عن العنصر بواسطة الاسم
   const GetDataMP: any =
@@ -115,7 +136,8 @@ export default function BookingsUx({ Data }: any) {
     }
   }
 
-  console.log(start_time, start_point);
+
+ 
 
   const handleDateChange = (event: any) => {
     // استقبال التاريخ من حقل الإدخال
@@ -235,41 +257,29 @@ export default function BookingsUx({ Data }: any) {
 
   // const city: any = ["فاقوس", "كوبري القصاصين"];
 
-  const areatwo: any = {
-    الحسينية: ["فاقوس"],
-    "كوبري القصاصين": ["كوبري القصاصين"],
-  };
+  // const areatwo: any = {
+  //   الحسينية: ["فاقوس"],
+  //   "كوبري القصاصين": ["كوبري القصاصين"],
+  // };
+
+  console.log("المنطقة: " + area + " -__- " + "نقطة التحرك: " + start_point)
 
   return (
     <section>
       <div className="m-auto text-center">
-        {area == "الحسينية" || area == "أبو حماد" ? (
-          <div
-            className="bg-orange-100 border-r-4 text-right border-orange-500 text-orange-700 p-4"
-            role="alert"
-          >
-            <p className="font-bold">تنبيه هام</p>
-            <p>
-              يرجي العلم بان الحجز متاح لنقطة التحرك الخاص بك فى الذهاب فقط أيام
-              ( السبت - الأحد - الأثنين ){" "}
-            </p>
-          </div>
-        ) : (
-          // <div className="grid grid-cols-1 sm:grid-cols-4 bg-yellow-400 rounded-md">
-          //   <div className="sm:col-span-1 bg-slate-100 rounded-r-md">
-          //     <span>
-          //       <IoWarningOutline className="text-6xl text-center m-auto text-yellow-400 items-center animate-pulse" />
-          //     </span>
-          //   </div>
-          //   <div className="sm:col-span-3">
-          //     <h2 className="block font-medium p-2 border-r-8 border-yellow-600 ">
-          //       الحجز غير متاح لمنطقتك الحالية برجاء اختيار منطقة بدلية من
-          //       الخيارات المتاحة
-          //     </h2>
-          //   </div>
-          // </div>
-          ""
-        )}
+        {area == "الحسينية" ||
+          (area == "أبو حماد"  && (
+            <div
+              className="bg-orange-100 border-r-4 text-right border-orange-500 text-orange-700 p-4"
+              role="alert"
+            >
+              <p className="font-bold">تنبيه هام</p>
+              <p>
+                يرجي العلم بان الحجز متاح لنقطة التحرك الخاص بك فى الذهاب فقط
+                أيام ( السبت - الأحد - الأثنين ){" "}
+              </p>
+            </div>
+          ))}
       </div>
       <form
         id="form"
@@ -278,47 +288,112 @@ export default function BookingsUx({ Data }: any) {
         className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-5 lg:px-8"
         onSubmit={handleSubmit}
       >
-       {(() => {
-  const currentDay = new Date().getDay(); // 0 هو الأحد، 1 هو الاثنين، وهكذا
+        {(() => {
+          const currentDay = new Date().getDay(); // 0 هو الأحد، 1 هو الاثنين، وهكذا
 
-  area == "الحسينية" || area == "أبو حماد"
-  // التحقق إذا كان اليوم ليس السبت (6)، الأحد (0)، أو الاثنين (1)
-  if (![0, 1, 2].includes(currentDay) || trip_type === "ذهاب") {
-    return (
-      <>
-        <div className="sm:col-span-3">
-          <label
-            htmlFor="areatwo"
-            className="block mb-2 font-medium leading-6 text-gray-900"
-          >
-            اختيار نقطة التحرك
-          </label>
-          <select
-            name="areatwo"
-            id="areatwo"
-            className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-            value={start_point}
-            onChange={(e) => setStart_Point(e.target.value)}
-            required
-          >
-            <option value="">اختر</option>
-            {PlaceTwo.places.data.map((item: any, index: any) => {
-              return (
-                <option value={item.attributes.place_name} key={index}>
-                  {item.attributes.place_name}
-                </option>
-              );
-            })}
-          </select>
-        </div>
-        <div className="border-t border-gray-900/10 mt-5"></div>
-      </>
-    );
-  }
-  return null; // لا يعرض شيئاً في حالة كان اليوم السبت، الأحد، أو الاثنين
-})()}
+          // area == "الحسينية" || area == "أبو حماد";
+          // التحقق إذا كان اليوم ليس السبت (6)، الأحد (0)، أو الاثنين (1)
+          if (
+            (![0, 1, 2].includes(currentDay) &&
+              trip_type === "ذهاب" &&
+              area == "الحسينية") ||
+            area == "أبو حماد"
+          ) {
+            return (
+              <>
+                <div className="sm:col-span-3">
+                  <label
+                    htmlFor="areatwo"
+                    className="block mb-2 font-medium leading-6 text-gray-900"
+                  >
+                    اختيار نقطة التحرك
+                  </label>
+                  <select
+                    name="areatwo"
+                    id="areatwo"
+                    className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                    value={start_point}
+                    onChange={(e) => setStart_Point(e.target.value)}
+                    required
+                  >
+                    <option value="">اختر</option>
+                    {PlaceTwo.places.data.map((item: any, index: any) => {
+                      return (
+                        <option value={item.attributes.place_name} key={index}>
+                          {item.attributes.place_name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="border-t border-gray-900/10 mt-5"></div>
+              </>
+            );
+          }
+          return null; // لا يعرض شيئاً في حالة كان اليوم السبت، الأحد، أو الاثنين
+        })()}
 
         <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="Area"
+              className="block font-medium leading-6 text-gray-900 mb-2"
+            >
+              المنطقة
+            </label>
+            <select
+              name="Area"
+              id="Area"
+              autoComplete="Area"
+              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+              value={area}
+              onChange={(e) => {
+                setArea(e.target.value);
+                setStart_Point("");
+              }}
+              required
+            >
+              <option value="" disabled hidden>
+                اختر
+              </option>
+              {AreasData.data.map((Area: any, index: any) => {
+                return (
+                  <option key={index} value={Area?.attributes?.name}>
+                    {Area?.attributes?.name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="start_point"
+              className="block font-medium leading-6 text-gray-900 mb-2"
+            >
+              {trip_type === "عودة" ? "نقطة العودة" : "نقطة التحرك"}
+            </label>
+            <select
+              name="start_point"
+              id="start_point"
+              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+              value={start_point}
+              onChange={(e) => setStart_Point(e.target.value)}
+              // required
+              // disabled={!selectedAreaData} // تعطيل حقل نقطة التحرك إذا لم يتم اختيار منطقة
+            >
+              <option value="" disabled hidden>
+                اختر
+              </option>
+              {selectedAreaData &&
+                selectedAreaData.map((point: any, index: any) => (
+                  <option key={index} value={point.attributes.place_name}>
+                    {point.attributes.place_name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
           <div className="sm:col-span-3">
             <label
               htmlFor="TripType"
@@ -369,33 +444,29 @@ export default function BookingsUx({ Data }: any) {
             </div>
           </div>
 
-          {trip_type !== "عودة" && (
-            <div className="sm:col-span-3">
-              <label
-                htmlFor="timing"
-                className="block font-medium leading-6 text-gray-900 mb-2"
-              >
-                التوقيت
-              </label>
-              <select
-                name="timing"
-                id="timing"
-                className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-                value={GetDataMP?.attributes.timing[0]}
-                onChange={(e) => setStart_time(e.target.value)}
-                required
-              >
-                <option value="" disabled hidden>
-                  اختر
-                </option>
-                {GetDataMP?.attributes.timing.map((item: any, index: any) => (
-                  <option key={index} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="seats"
+              className="block font-medium leading-6 text-gray-900 mb-2"
+            >
+              عدد المقاعد
+            </label>
+            <select
+              name="seats"
+              id="seats"
+              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+              value={seats}
+              onChange={(e) => setseats(e.target.value)}
+              required
+            >
+              <option value="" disabled hidden>
+                اختر
+              </option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
 
           {trip_type !== "ذهاب" && (
             <div className="sm:col-span-3">
@@ -426,30 +497,6 @@ export default function BookingsUx({ Data }: any) {
               </select>
             </div>
           )}
-        </div>
-
-        <div className="sm:col-span-3 mt-5">
-          <label
-            htmlFor="seats"
-            className="block font-medium leading-6 text-gray-900 mb-2"
-          >
-            عدد المقاعد
-          </label>
-          <select
-            name="seats"
-            id="seats"
-            className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-            value={seats}
-            onChange={(e) => setseats(e.target.value)}
-            required
-          >
-            <option value="" disabled hidden>
-              اختر
-            </option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
         </div>
 
         {payment_type === "فودافون كاش" && (

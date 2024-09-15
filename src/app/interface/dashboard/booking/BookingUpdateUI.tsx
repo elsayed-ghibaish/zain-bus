@@ -177,6 +177,8 @@ export default function BookingUpdateUI(id: any) {
     router.push("/dashboard/booking-confirmation");
   }
 
+  // console.log(Control.data[0].attributes.departure_time);
+
   const firstName = first_name?.split(" ").slice(0, 3).join(" ") || [];
   const lastName = last_name?.split(" ").pop() || "";
 
@@ -191,7 +193,7 @@ export default function BookingUpdateUI(id: any) {
   }
   return (
     <div className="print:bg-white ">
-      <div className="flex-1 p-10">
+      <div className="flex-1">
         <section>
           <div className="mx-auto max-w-3xl text-center mt-5">
             <h2 className="text-xl font-medium bg-slate-200 border-2 border-white shadow-sm rounded-t-lg p-5">
@@ -247,7 +249,7 @@ export default function BookingUpdateUI(id: any) {
                 </div>
               </div>
 
-              {trip_type !== "عودة" && (
+              {/* {trip_type !== "عودة" && (
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="start_time"
@@ -275,7 +277,7 @@ export default function BookingUpdateUI(id: any) {
                     )}
                   </select>
                 </div>
-              )}
+              )} */}
 
               {trip_type !== "ذهاب" && (
                 <div className="sm:col-span-3">
@@ -297,7 +299,7 @@ export default function BookingUpdateUI(id: any) {
                       <option value="" disabled hidden>
                         نهاية المحاضرات
                       </option>
-                      {Control.data.attributes?.departure_time.map(
+                      {Control.data[0].attributes.departure_time.map(
                         (time: any) => (
                           <option key={time.value} value={time.value}>
                             {time.label}
@@ -332,7 +334,8 @@ export default function BookingUpdateUI(id: any) {
                   <option value="3">3</option>
                 </select>
               </div>
-              <div className="sm:col-span-3">
+
+              {/* <div className="sm:col-span-3">
                 <label
                   htmlFor="paymenttype"
                   className="block font-medium leading-6 text-gray-900 mb-2"
@@ -357,7 +360,7 @@ export default function BookingUpdateUI(id: any) {
                     <option value="MasterCard">MasterCard</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="border-t border-gray-900/10 mt-3"></div>
             <div className="mt-3">

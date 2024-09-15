@@ -204,7 +204,7 @@ export default function ControlBooking({ Data, Etid }: any) {
                         const time = e.target.value; // قيمة الوقت المدخلة من المستخدم بصيغة HH:mm
                         // إعادة تنسيق الوقت إلى صيغة HH:mm:ss.SSS
                         const formattedTime = format(
-                          new Date(`1970-01-01T${time}:00.000Z`),
+                          new Date(`1970-01-01T${time}:00.000`),
                           "HH:mm:ss.SSS"
                         );
                         setEnd_of_day_time(formattedTime); // تحديث الحالة بالوقت المنسق
