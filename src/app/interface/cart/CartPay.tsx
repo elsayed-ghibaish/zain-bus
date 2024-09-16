@@ -159,14 +159,12 @@ const PaymentPage = () => {
     const message = `
    *مرحبا* ${booking.first_name.split(" ")[0] || ""}👋🏻،
    ✅ *تم استلام طلبك بنجاح*
-   💳 *يرجى الدفع لتأكيد الحجز*
+   💰 *يرجى الدفع لتأكيد الحجز*
    📅 *تاريخ الرحلة*: ${bookingday}
    💸 *تكلفة الرحلة*: ${booking.trip_cost} جنيهًا
-   📢 *للتأكيد،* يُرجى إتمام عملية الدفع 💳
-   يرجى إرسال قيمة الحجز على الرقم (01040015600)
-   مع إرفاق سكرين شوت للتحويل عبر واتساب لنفس الرقم
+   📱 *رقم التحويل*: 01040015600 
    *مع تحياتنا،*
-   Zain Bus
+   zainbus.com
     `;
 
     try {
@@ -665,15 +663,15 @@ const PaymentPage = () => {
             {/* زر الدفع والإجمالي */}
 
             {/* زر الدفع */}
-            
+
             <div className="flex justify-center space-y-0">
-                <h3 className="text-xl text-red-600 font-bold inline">تكلفة الرحلة: <p className="inline">{booking.trip_cost} جنيهًا</p></h3>
-              </div>
+              <h3 className="text-xl text-red-600 font-bold inline">
+                تكلفة الرحلة:{" "}
+                <p className="inline">{booking.trip_cost} جنيهًا</p>
+              </h3>
+            </div>
 
             <div className="flex justify-center">
-
-          
-
               <button
                 className={`${
                   !selectedPaymentMethod ? "mt-5" : ""

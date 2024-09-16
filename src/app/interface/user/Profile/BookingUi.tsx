@@ -133,7 +133,7 @@ export default function BookingUI() {
             <a className="block text-white" href="/">
               <span className="sr-only">Home</span>
               <img
-                src="/logo.svg"
+                src="/logo-0.svg"
                 className="max-w-32 p-10 bg-white"
                 alt=""
               />
@@ -153,7 +153,7 @@ export default function BookingUI() {
         (ControlsData.data[0].attributes?.booking_status === true &&
           availableDays.length > 0 &&
           UserData.data.confirmed === true) ? (
-          <main className="lg:flex md:flex sm:block items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
+          <main className="lg:flex md:flex sm:block items-center justify-center px-4 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
             <div className="w-full">
               <div className="relative -mt-16 block lg:hidden">
                 <a

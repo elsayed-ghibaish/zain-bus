@@ -74,10 +74,11 @@ export default function BookingBags({ Data }: any) {
     setEmail(UserData.data.email);
     setArea(UserData.data.area);
     setStart_Point(UserData.data.start_point);
+    setStart_time(GetDataMP?.attributes.timing[0]);
     setDestination(UserData.data.university);
     setUser_id(UserData.data.id);
     GetCost();
-  }, [session, dispatch, bag_type]);
+  }, [session, bag_type]);
 
   function GetCost() {
     if (bag_type === "شنطة أكل صغيرة") {
@@ -118,15 +119,15 @@ export default function BookingBags({ Data }: any) {
 
   // إنشاء قائمة بالأيام المتاحة
   const inputStartDate = new Date(
-    GetData.attributes.booking_start_date || new Date()
+    GetData?.attributes.booking_start_date || new Date()
   );
   const inputEndDate = addDays(
     inputStartDate,
-    GetData.attributes.booking_days_count
+    GetData?.attributes.booking_days_count
   );
 
   // الوقت المخزن في متغير نصي
-  const timeString = `${GetData.attributes.end_of_day_time}`; // الساعة 6 مساءً
+  const timeString = `${GetData?.attributes.end_of_day_time}`; // الساعة 6 مساءً
 
   // تقسيم الوقت النصي إلى أجزاء
   const [hours, minutes, seconds] = timeString
@@ -152,7 +153,7 @@ export default function BookingBags({ Data }: any) {
   // تاريخ النهاية
   const endDate = inputEndDate;
 
-  const filterEnabled = GetData.attributes.cancel_friday_booking;
+  const filterEnabled = GetData?.attributes.cancel_friday_booking;
 
   // تحديد الساعة السادسة مساءً في اليوم الحالي
   const todaySixPm = specificTime;

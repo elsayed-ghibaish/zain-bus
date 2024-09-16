@@ -12,7 +12,7 @@ export default function Footer() {
             src="/logo.svg"
             width={933}
             height={300}
-            className="mx-auto h-10 w-auto"
+            className="mx-auto h-6 w-auto"
             alt="الزين باص"
           />
 

@@ -4,39 +4,37 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { IoWarningOutline } from "react-icons/io5";
 import { LuSendHorizonal } from "react-icons/lu";
-import { parseISO } from "date-fns/parseISO";
+import {
+  parseISO,
+  format,
+  isBefore,
+  isAfter,
+  addDays,
+  getDay,
+  eachDayOfInterval,
+} from "date-fns";
+import { ar } from "date-fns/locale";
 import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/redux/store";
 import { fetchUserMeData } from "@/app/redux/features/strapi-1/UserMeSlice";
 import { BookingDashboardData } from "@/app/redux/features/strapi-1/BookingDashboardSlice";
 import { PlaceData } from "@/app/redux/features/strapi-0/PlacesSlice";
-import {
-  addDays,
-  eachDayOfInterval,
-  isBefore,
-  format,
-  getDay,
-  isAfter,
-  setHours,
-  setMinutes,
-  setSeconds,
-} from "date-fns";
-import { ar } from "date-fns/locale";
-import { PlaceTwo } from "@/app/api/PlaceTwo";
 import { AreaData } from "@/app/redux/features/strapi-0/AreaSlice";
+import SkeletonLoaders from "./SkeletonLoaders";
 
 export default function BookingsUx({ Data }: any) {
   const router = useRouter();
   const { data: session }: any = useSession();
   const dispatch: AppDispatch = useDispatch();
+
   const [loading, setLoading] = useState(true);
-  const UserData: any = useSelector((state: RootState) => state.UserMe);
+  const UserData: any = useSelector((state: RootState) => state.UserMe.data);
   const ControlsData: any = useSelector(
     (state: RootState) => state.BookingDashboard
   );
-  const AreasData = useSelector((state: RootState) => state.Area);
-  const PlacesData: any = useSelector((state: RootState) => state.Place);
+  const AreasData = useSelector((state: RootState) => state.Area.data);
+  const PlacesData: any = useSelector((state: RootState) => state.Place.data);
 
   const GetData = Data;
 
@@ -68,61 +66,49 @@ export default function BookingsUx({ Data }: any) {
   const [success, setSuccess] = useState(false);
   const [selectedAreaData, setSelectedAreaData]: any = useState(null);
   const [selectedArea, setSelectedArea] = useState(null);
-  useEffect(() => {
-    setStart_Point(UserData.data.start_point);
-  }, []);
 
   useEffect(() => {
-    setLoading(true);
     if (session) {
-      const userData = session.user.token;
-      const id = 1;
-      const fetchData = () => {
-        dispatch(fetchUserMeData(userData));
-        dispatch(BookingDashboardData({ token: userData, id }));
-        dispatch(AreaData());
-        dispatch(PlaceData());
-      };
-      fetchData();
+      const userToken = session.user.token;
+      dispatch(fetchUserMeData(userToken));
+      dispatch(BookingDashboardData({ token: userToken, id: 1 }));
+      dispatch(AreaData());
+      dispatch(PlaceData());
     }
-
-    setFirst_Name(UserData.data.first_name);
-    setLast_Name(UserData.data.last_name);
-    setPhone(UserData.data.phone_number);
-    setEmail(UserData.data.email);
-    setArea(UserData.data.area);
-    setStart_Point(UserData.data.start_point);
-    setDestination(UserData.data.university);
-    setUser_id(UserData.data.id);
-    setStart_time(GetDataMP?.attributes.timing[0]);
-  }, [session.user.token]);
+  }, [session?.user?.token]);
 
   useEffect(() => {
-    // ابحث عن بيانات المنطقة المحددة في القائمة
-    const selectedRegion = AreasData.data.find(
-      (area: any) => area.attributes.name === area
-    );
-    // ابحث عن بيانات المنطقة المحددة في القائمة
-    const selectedArea = AreasData.data.find(
-      (areas: any) => areas.attributes.name === area
-    );
-    if (selectedArea) {
-      // حدد البيانات المرتبطة بالمنطقة المحددة
-      setSelectedAreaData(selectedArea.attributes.places.data);
-    } else {
-      setSelectedAreaData(null); // قم بمسح البيانات إذا لم يتم اختيار منطقة
+    if (UserData) {
+      setFirst_Name(UserData.first_name);
+      setLast_Name(UserData.last_name);
+      setPhone(UserData.phone_number);
+      setEmail(UserData.email);
+      setArea(UserData.area);
+      setStart_Point(UserData.start_point);
+      setStart_time(GetDataMP?.attributes?.timing[0]);
+      setDestination(UserData.university);
+      setUser_id(UserData.id);
+    }
+  }, [UserData]);
+
+  useEffect(() => {
+    if (area && AreasData) {
+      const selectedArea = AreasData.find(
+        (areaItem: any) => areaItem.attributes.name === area
+      );
+      if (selectedArea) {
+        setSelectedAreaData(selectedArea.attributes.places.data);
+      } else {
+        setSelectedAreaData(null);
+      }
     }
     GetCost();
-  }, [area, start_point, trip_type, seats]);
+    setStart_time(GetDataMP?.attributes.timing[0]);
+  }, [area, trip_type, seats, start_point]);
 
-  // البحث عن العنصر بواسطة الاسم
-  const GetDataMP: any =
-    PlacesData?.data?.find(
-      (item: any) => item.attributes.place_name === start_point
-    ) ||
-    PlaceTwo.places?.data?.find(
-      (item: any) => item.attributes.place_name === start_point
-    );
+  const GetDataMP: any = PlacesData?.find(
+    (item: any) => item.attributes.place_name === start_point
+  );
 
   function GetCost() {
     if (GetDataMP) {
@@ -135,9 +121,6 @@ export default function BookingsUx({ Data }: any) {
       }
     }
   }
-
-
- 
 
   const handleDateChange = (event: any) => {
     // استقبال التاريخ من حقل الإدخال
@@ -163,15 +146,15 @@ export default function BookingsUx({ Data }: any) {
 
   // إنشاء قائمة بالأيام المتاحة
   const inputStartDate = new Date(
-    GetData.attributes.booking_start_date || new Date()
+    GetData?.attributes.booking_start_date || new Date()
   );
   const inputEndDate = addDays(
     inputStartDate,
-    GetData.attributes.booking_days_count
+    GetData?.attributes.booking_days_count
   );
 
   // الوقت المخزن في متغير نصي
-  const timeString = `${GetData.attributes.end_of_day_time}`; // الساعة 6 مساءً
+  const timeString = `${GetData?.attributes.end_of_day_time}`; // الساعة 6 مساءً
 
   // تقسيم الوقت النصي إلى أجزاء
   const [hours, minutes, seconds] = timeString
@@ -197,7 +180,7 @@ export default function BookingsUx({ Data }: any) {
   // تاريخ النهاية
   const endDate = inputEndDate;
 
-  const filterEnabled = GetData.attributes.cancel_friday_booking;
+  const filterEnabled = GetData?.attributes.cancel_friday_booking;
 
   // تحديد الساعة السادسة مساءً في اليوم الحالي
   const todaySixPm = specificTime;
@@ -255,310 +238,234 @@ export default function BookingsUx({ Data }: any) {
     router.replace("/cart");
   };
 
-  // const city: any = ["فاقوس", "كوبري القصاصين"];
-
-  // const areatwo: any = {
-  //   الحسينية: ["فاقوس"],
-  //   "كوبري القصاصين": ["كوبري القصاصين"],
-  // };
-
-  console.log("المنطقة: " + area + " -__- " + "نقطة التحرك: " + start_point)
-
   return (
     <section>
-      <div className="m-auto text-center">
-        {area == "الحسينية" ||
-          (area == "أبو حماد"  && (
-            <div
-              className="bg-orange-100 border-r-4 text-right border-orange-500 text-orange-700 p-4"
-              role="alert"
-            >
-              <p className="font-bold">تنبيه هام</p>
-              <p>
-                يرجي العلم بان الحجز متاح لنقطة التحرك الخاص بك فى الذهاب فقط
-                أيام ( السبت - الأحد - الأثنين ){" "}
-              </p>
-            </div>
-          ))}
-      </div>
-      <form
-        id="form"
-        action=""
-        method="POST"
-        className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-5 lg:px-8"
-        onSubmit={handleSubmit}
-      >
-        {(() => {
-          const currentDay = new Date().getDay(); // 0 هو الأحد، 1 هو الاثنين، وهكذا
+      {ControlsData.loading ? (
+        <SkeletonLoaders />
+      ) : (
+        <>
+          <div className="m-auto text-center">
+            {(area === "الحسينية" || area === "أبو حماد") && (
+              <div
+                className="bg-orange-100 border-r-4 text-right border-orange-500 text-orange-700 p-4"
+                role="alert"
+              >
+                <p className="font-bold">تنبيه هام</p>
+                <p>
+                  يرجي العلم بان الحجز متاح لنقطة التحرك الخاصة بك فى الذهاب فقط
+                  أيام (السبت - الأحد - الأثنين)
+                </p>
+              </div>
+            )}
+          </div>
 
-          // area == "الحسينية" || area == "أبو حماد";
-          // التحقق إذا كان اليوم ليس السبت (6)، الأحد (0)، أو الاثنين (1)
-          if (
-            (![0, 1, 2].includes(currentDay) &&
-              trip_type === "ذهاب" &&
-              area == "الحسينية") ||
-            area == "أبو حماد"
-          ) {
-            return (
-              <>
+          <form
+            id="form"
+            action=""
+            method="POST"
+            className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-5 lg:px-8"
+            onSubmit={handleSubmit}
+          >
+            <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="TripType"
+                  className="block font-medium leading-6 text-gray-900 mb-2"
+                >
+                  نوع الرحلة
+                </label>
+                <select
+                  name="TripType"
+                  id="TripType"
+                  className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                  value={trip_type}
+                  onChange={(e) => setTrip_type(e.target.value)}
+                  required
+                >
+                  <option disabled hidden></option>
+                  <option value="ذهاب">ذهاب</option>
+                  <option value="عودة">عودة</option>
+                  <option value="ذهاب وعودة">ذهاب وعودة</option>
+                </select>
+              </div>
+
+              {trip_type !== "عودة" && (
                 <div className="sm:col-span-3">
                   <label
-                    htmlFor="areatwo"
-                    className="block mb-2 font-medium leading-6 text-gray-900"
+                    htmlFor="start_point"
+                    className="block font-medium leading-6 text-gray-900 mb-2"
                   >
-                    اختيار نقطة التحرك
+                    نقطة التحرك
                   </label>
                   <select
-                    name="areatwo"
-                    id="areatwo"
+                    name="start_point"
+                    id="start_point"
                     className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
                     value={start_point}
                     onChange={(e) => setStart_Point(e.target.value)}
-                    required
+                    // required
+                    // disabled={!selectedAreaData} // تعطيل حقل نقطة التحرك إذا لم يتم اختيار منطقة
                   >
-                    <option value="">اختر</option>
-                    {PlaceTwo.places.data.map((item: any, index: any) => {
-                      return (
-                        <option value={item.attributes.place_name} key={index}>
-                          {item.attributes.place_name}
+                    <option value="" disabled hidden>
+                      اختر
+                    </option>
+                    {selectedAreaData &&
+                      selectedAreaData.map((point: any, index: any) => (
+                        <option key={index} value={point.attributes.place_name}>
+                          {point.attributes.place_name}
                         </option>
-                      );
-                    })}
+                      ))}
                   </select>
                 </div>
-                <div className="border-t border-gray-900/10 mt-5"></div>
-              </>
-            );
-          }
-          return null; // لا يعرض شيئاً في حالة كان اليوم السبت، الأحد، أو الاثنين
-        })()}
+              )}
 
-        <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="Area"
-              className="block font-medium leading-6 text-gray-900 mb-2"
-            >
-              المنطقة
-            </label>
-            <select
-              name="Area"
-              id="Area"
-              autoComplete="Area"
-              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-              value={area}
-              onChange={(e) => {
-                setArea(e.target.value);
-                setStart_Point("");
-              }}
-              required
-            >
-              <option value="" disabled hidden>
-                اختر
-              </option>
-              {AreasData.data.map((Area: any, index: any) => {
-                return (
-                  <option key={index} value={Area?.attributes?.name}>
-                    {Area?.attributes?.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="start_point"
-              className="block font-medium leading-6 text-gray-900 mb-2"
-            >
-              {trip_type === "عودة" ? "نقطة العودة" : "نقطة التحرك"}
-            </label>
-            <select
-              name="start_point"
-              id="start_point"
-              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-              value={start_point}
-              onChange={(e) => setStart_Point(e.target.value)}
-              // required
-              // disabled={!selectedAreaData} // تعطيل حقل نقطة التحرك إذا لم يتم اختيار منطقة
-            >
-              <option value="" disabled hidden>
-                اختر
-              </option>
-              {selectedAreaData &&
-                selectedAreaData.map((point: any, index: any) => (
-                  <option key={index} value={point.attributes.place_name}>
-                    {point.attributes.place_name}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="TripType"
-              className="block font-medium leading-6 text-gray-900 mb-2"
-            >
-              نوع الرحلة
-            </label>
-            <select
-              name="TripType"
-              id="TripType"
-              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-              value={trip_type}
-              onChange={(e) => setTrip_type(e.target.value)}
-              required
-            >
-              <option disabled hidden></option>
-              <option value="ذهاب">ذهاب</option>
-              <option value="عودة">عودة</option>
-              <option value="ذهاب وعودة">ذهاب وعودة</option>
-            </select>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="date"
-              className="block font-medium leading-6 text-gray-900 mb-2"
-            >
-              تاريخ الرحلة
-            </label>
-            <div className="sm:col-span-3">
-              <select
-                name="date"
-                id="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-                required
-              >
-                <option value="" disabled hidden>
-                  اختر التاريخ
-                </option>
-                {availableDays.map((day: any) => (
-                  <option key={day.value} value={day.value}>
-                    {day.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="seats"
-              className="block font-medium leading-6 text-gray-900 mb-2"
-            >
-              عدد المقاعد
-            </label>
-            <select
-              name="seats"
-              id="seats"
-              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-              value={seats}
-              onChange={(e) => setseats(e.target.value)}
-              required
-            >
-              <option value="" disabled hidden>
-                اختر
-              </option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
-          </div>
-
-          {trip_type !== "ذهاب" && (
-            <div className="sm:col-span-3">
-              <label
-                htmlFor="time"
-                className="block font-medium leading-6 text-gray-900 mb-2"
-              >
-                العودة
-              </label>
-              <select
-                name="time"
-                id="time"
-                value={end_time}
-                onChange={(e) => setEnd_time(e.target.value)}
-                className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-                required
-              >
-                <option value="" disabled hidden>
-                  نهاية المحاضرات
-                </option>
-                {ControlsData?.data?.attributes?.departure_time.map(
-                  (time: any) => (
-                    <option key={time.value} value={time.value}>
-                      {time.label}
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="date"
+                  className="block font-medium leading-6 text-gray-900 mb-2"
+                >
+                  تاريخ الرحلة
+                </label>
+                <div className="sm:col-span-3">
+                  <select
+                    name="date"
+                    id="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                    required
+                  >
+                    <option value="" disabled hidden>
+                      اختر التاريخ
                     </option>
-                  )
-                )}
-              </select>
+                    {availableDays.map((day: any) => (
+                      <option key={day.value} value={day.value}>
+                        {day.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="seats"
+                  className="block font-medium leading-6 text-gray-900 mb-2"
+                >
+                  عدد المقاعد
+                </label>
+                <select
+                  name="seats"
+                  id="seats"
+                  className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                  value={seats}
+                  onChange={(e) => setseats(e.target.value)}
+                  required
+                >
+                  <option value="" disabled hidden>
+                    اختر
+                  </option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </div>
+
+              {trip_type !== "ذهاب" && (
+                <div className="sm:col-span-3">
+                  <label
+                    htmlFor="time"
+                    className="block font-medium leading-6 text-gray-900 mb-2"
+                  >
+                    العودة
+                  </label>
+                  <select
+                    name="time"
+                    id="time"
+                    value={end_time}
+                    onChange={(e) => setEnd_time(e.target.value)}
+                    className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                    required
+                  >
+                    <option value="" disabled hidden>
+                      نهاية المحاضرات
+                    </option>
+                    {ControlsData?.data?.attributes?.departure_time.map(
+                      (time: any) => (
+                        <option key={time.value} value={time.value}>
+                          {time.label}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {payment_type === "فودافون كاش" && (
-          <div className="text-sm text-gray-900 mt-2 bg-red-300 p-5">
-            {
-              "برجاء ارسال قيمة الحجز على رقم (01012930010) مرفق معاه سكرين شوت للتحويل على واتساب لنفس الرقم"
-            }
-          </div>
-        )}
+            {payment_type === "فودافون كاش" && (
+              <div className="text-sm text-gray-900 mt-2 bg-red-300 p-5">
+                {
+                  "برجاء ارسال قيمة الحجز على رقم (01012930010) مرفق معاه سكرين شوت للتحويل على واتساب لنفس الرقم"
+                }
+              </div>
+            )}
 
-        <div className="border-t border-gray-900/10 mt-3"></div>
-        <div className="mt-3">
-          <h3>
-            <span className="text-red-500 font-medium">تكلفة الرحلة : </span>
-            {`${trip_cost ? trip_cost : "0"} ج.م`}
-          </h3>
-        </div>
-        <div className="border-t border-gray-900/10 mt-3"></div>
+            <div className="border-t border-gray-900/10 mt-3"></div>
+            <div className="mt-3">
+              <h3>
+                <span className="text-lg text-red-500 font-bold">
+                  تكلفة الرحلة :{" "}
+                </span>
+                {`${trip_cost ? trip_cost : "0"} جنيهًا`}
+              </h3>
+            </div>
+            <div className="border-t border-gray-900/10 mt-3"></div>
 
-        <div className="mt-5">
-          <button
-            type="submit"
-            name="submit"
-            id="submit"
-            className="block w-full rounded-md px-3.5 py-2.5 text-lg text-center text-white shadow-sm 
+            <div className="mt-5">
+              <button
+                type="submit"
+                name="submit"
+                id="submit"
+                className="block w-full rounded-md px-3.5 py-2.5 text-lg text-center text-white shadow-sm 
              focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600
             bg-red-700 hover:bg-red-800"
-          >
-            {!loading ? "جاري إرسال البيانات..." : "متابعة الحجز"}
-            <LuSendHorizonal className="inline-block mr-3 mb-2 -rotate-45" />
-          </button>
-        </div>
-
-        {success && (
-          <div
-            className="mb-3 mt-5 inline-flex w-full items-center rounded-lg bg-green-100 px-6 py-5 text-base text-green-700"
-            role="alert"
-          >
-            <span className="mr-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="h-5 w-5"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </span>
-            تم تسجيل الحجز بنجاح
-          </div>
-        )}
+                {!loading ? "جاري إرسال البيانات..." : "متابعة الحجز"}
+                <LuSendHorizonal className="inline-block mr-3 mb-2 -rotate-45" />
+              </button>
+            </div>
 
-        {error && (
-          <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
-            {error}
-          </div>
-        )}
-      </form>
+            {success && (
+              <div
+                className="mb-3 mt-5 inline-flex w-full items-center rounded-lg bg-green-100 px-6 py-5 text-base text-green-700"
+                role="alert"
+              >
+                <span className="mr-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-5 w-5"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+                تم تسجيل الحجز بنجاح
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
+                {error}
+              </div>
+            )}
+          </form>
+        </>
+      )}
     </section>
   );
 }

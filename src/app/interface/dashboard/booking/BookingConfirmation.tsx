@@ -185,11 +185,10 @@ export default function BookingConfirmation() {
     const sender = process.env.NEXT_PUBLIC_WHATSAPP_SENDER;
 
     const message = `
-   *مرحبا* ${item.attributes.first_name.split(" ")[0] || ""}👋🏻،
+   مرحبا *${item.attributes.first_name.split(" ")[0] || ""}*👋🏻،
    ✅ *تم تاكيد حجز رحلتك بنجاح*
-   *بيانات الرحلة*
    📅 *تاريخ الرحلة*: ${bookingday}
-   🚗 *نوع الرحلة*: ${item.attributes.trip_type}
+   🔛 *نوع الرحلة*: ${item.attributes.trip_type}
    👥 *عدد المقاعد*: ${item.attributes.seats}
    ${
      item.attributes.trip_type === "عودة"
@@ -208,7 +207,7 @@ export default function BookingConfirmation() {
    }   
    📢 نرجو التواجد قبل معاد التحرك بـ 15 دقيقة 
       *مع تحياتنا،*
-      Zain Bus
+      zainbus.com
     `;
 
     try {
@@ -246,9 +245,8 @@ export default function BookingConfirmation() {
    ❌ *نأسف لإبلاغك بأنه تم إلغاء حجز رحلتك*
    📅 *المقررة يوم*: ${bookingday} 
     وذلك بسبب عدم استكمال عملية الدفع
-   💸 *تكلفة الرحلة*: ${item.attributes.trip_cost} جنيهًا
       *مع تحياتنا،*
-      Zain Bus
+      zainbus.com
     `;
 
     try {
