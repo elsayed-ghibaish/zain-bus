@@ -13,9 +13,6 @@ import {
   format,
   getDay,
   isAfter,
-  setHours,
-  setMinutes,
-  setSeconds,
 } from "date-fns";
 import { ar } from "date-fns/locale";
 import { AreaData } from "@/app/redux/features/strapi-0/AreaSlice";
@@ -24,7 +21,6 @@ import BookingGusetSection from "./BookingGusetSection";
 import { DashboardIdData } from "@/app/redux/features/strapi-0/DashboardIdSlice";
 
 export default function BookingGuestUi() {
-  const { data: session }: any = useSession();
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const Control: any = useSelector((state: RootState) => state.DashboardId);
@@ -53,8 +49,6 @@ export default function BookingGuestUi() {
   const [completed, setCompleted] = useState("");
   const [user_id, setUser_id] = useState();
 
-  const [area_two, setArea_Tow] = useState("");
-  const [area_three, setArea_Three] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -65,7 +59,6 @@ export default function BookingGuestUi() {
     if (Control.loading) {
       setInitialLoad(false);
     }
-    const id = 3;
     const fetchData = () => {
       dispatch(DashboardIdData(3));
       dispatch(AreaData());
@@ -73,8 +66,8 @@ export default function BookingGuestUi() {
     };
     fetchData();
     GetCost();
-    setStart_time(GetDataMP?.attributes.timing[0]);
-  }, [trip_type, seats, start_point]);
+    // setStart_time(GetDataMP?.attributes.timing[0]);
+  }, []);
 
   useEffect(() => {
     // ابحث عن بيانات المنطقة المحددة في القائمة
@@ -91,7 +84,9 @@ export default function BookingGuestUi() {
     } else {
       setSelectedAreaData(null); // قم بمسح البيانات إذا لم يتم اختيار منطقة
     }
-  }, [area]);
+    setStart_time(GetDataMP?.attributes.timing[0]);
+    GetCost();
+  }, [area, trip_type, seats, start_point]);
 
   // البحث عن العنصر بواسطة الاسم
   const GetDataMP: any = PlacesData.data.find(
@@ -139,10 +134,7 @@ export default function BookingGuestUi() {
   const inputStartDate = new Date(
     Control.data.attributes?.booking_start_date || new Date()
   );
-  const inputEndDate = addDays(
-    inputStartDate,
-    Control.data.attributes?.booking_days_count
-  );
+  const inputEndDate = addDays(inputStartDate, Control.data.attributes?.booking_days_count);
 
   // الوقت المخزن في متغير نصي
   const timeString = `${Control.data.attributes?.end_of_day_time}`; // الساعة 6 مساءً
@@ -563,9 +555,9 @@ export default function BookingGuestUi() {
 
           <div className="border-t border-gray-900/10 mt-3"></div>
           <div className="mt-3">
-            <h3>
-              <span className="text-red-500 font-medium">تكلفة الرحلة : </span>
-              {`${trip_cost ? trip_cost : "0"} ج.م`}
+            <h3 className="font-bold text-lg">
+              <span className="text-lg text-red-500 font-bold">تكلفة الرحلة : </span>
+              {`${trip_cost ? trip_cost : "0"} جنيهًا`}
             </h3>
           </div>
           <div className="border-t border-gray-900/10 mt-3"></div>

@@ -1,9 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlinePrinter } from "react-icons/ai";
 import {
   FaHome,
-  FaUser,
   FaCog,
   FaBars,
   FaTimes,
@@ -32,7 +31,7 @@ const Sidebar: React.FC = () => {
 
       {/* Sidebar للشاشات الكبيرة */}
       <div
-        className={`hidden md:flex flex-col p-5 bg-gray-800 text-white transition-all duration-300 ${
+        className={`hidden md:flex flex-col p-5 bg-gray-800 text-white transition-all duration-300 h-full ${
           isOpen ? "w-64" : "w-20"
         }`}
       >
@@ -43,7 +42,11 @@ const Sidebar: React.FC = () => {
             }`}
           >
             <div className="flex flex-col items-center justify-center">
-              <img className="h-32" src="/logo.svg" alt="الزين ترافل" />
+              <img
+                className="w-24 flex items-center justify-center m-10"
+                src="/logo.svg"
+                alt="الزين ترافل"
+              />
             </div>
             لوحة التحكم
             <div className="border-b border-b-gray-700 mt-5 w-full"></div>{" "}

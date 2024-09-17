@@ -5,7 +5,7 @@ import { addDays, parseISO } from "date-fns";
 import { ar } from "date-fns/locale/ar";
 import { AppDispatch, RootState } from "@/app/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { BookingData } from "@/app/redux/features/strapi-0/BookingSlice";
+import { BookingTwoData } from "@/app/redux/features/strapi-1/BookingSlice";
 import {
   FaMoneyBillAlt,
   FaMoneyBillWave,
@@ -14,10 +14,10 @@ import {
 } from "react-icons/fa";
 export default function CardsOne() {
   const dispatch: AppDispatch = useDispatch();
-  const Bookings: any = useSelector((state: RootState) => state.Booking);
+  const Bookings: any = useSelector((state: RootState) => state.BookingTwo);
 
   const fetchData = () => {
-    dispatch(BookingData(null));
+    dispatch(BookingTwoData());
   };
 
   useEffect(() => {

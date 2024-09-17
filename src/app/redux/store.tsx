@@ -8,6 +8,7 @@ import PlacesReducer from "./features/strapi-0/PlacesSlice";
 import StudentsReducer from "./features/strapi-0/StudentsSlice";
 import GetUsersReducer from "./features/strapi-0/GetUserSlice";
 import BookingReducer from "./features/strapi-0/BookingSlice";
+import BookingTwoReducer from "./features/strapi-1/BookingSlice";
 import BookingsIdsReducer from "./features/strapi-0/BookingsIdSlice";
 import DashboardIdsReducer from "./features/strapi-0/DashboardIdSlice";
 import BookingBagsReducer from "./features/strapi-0/BookingBagSlice";
@@ -28,6 +29,7 @@ export const store = configureStore({
     DashboardId: DashboardIdsReducer,
     BookingBag: BookingBagsReducer,
     Bags: BagIDsReducer,
+    BookingTwo: BookingTwoReducer,
   },
 });
 

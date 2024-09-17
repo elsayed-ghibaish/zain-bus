@@ -49,7 +49,11 @@ export default function SignUp() {
       dispatch(fetchUniversityData());
     };
     fetchData();
-  }, [dispatch]);
+  }, []);
+
+  useEffect(() => {
+    setUniversity(UniversityData.data[0]?.attributes.university_name);
+  });
 
   const handleCheckboxChange = () => {
     setAgreeTerms(!agreeTerms);
@@ -136,9 +140,9 @@ export default function SignUp() {
       !area ||
       !start_point ||
       !university ||
-      !faculty ||
-      !academic_year ||
-      !university_accommodation
+      !faculty
+      // !academic_year ||
+      // !university_accommodation
     ) {
       setError("برجاء استكمال جميع البيانات بشكل صحيح");
       return;
@@ -185,6 +189,7 @@ export default function SignUp() {
       console.log("حدث خطأ أثناء التسجيل: ", error);
     }
   };
+
   return (
     <section>
       <div className="mt-5"></div>
@@ -254,36 +259,11 @@ export default function SignUp() {
 
           <div className="sm:col-span-3">
             <label
-              htmlFor="email"
-              className="block font-medium leading-6 text-gray-900"
-            >
-              {" "}
-              البريد الجامعي{" "}
-            </label>
-            <div className="mt-2">
-              <input
-                type="email"
-                name="email"
-                id="email"
-                autoComplete="email"
-                className="bg-gray-200 text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                // pattern=" " // هذا النمط يسمح بإدخال الأحرف العربية فقط
-                title="الرجاء إدخال الاسم باللغة العربية ويجب أن يكون الأسم ثلاثى على الأقل"
-                required
-                dir="ltr"
-              />
-            </div>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label
               htmlFor="phone_number"
               className="block font-medium leading-6 text-gray-900"
             >
               {" "}
-              رقم الهاتف{" "}
+              رقم الهاتف (يدعم واتساب)
             </label>
             <div className="relative mt-2">
               <div className="absolute inset-y-0 left-0 flex items-center">
@@ -308,55 +288,6 @@ export default function SignUp() {
                 className="bg-gray-200 text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-10 block w-full focus:outline-red-500"
                 onChange={(e) => setPhone_Number(e.target.value)}
                 value={phone_number}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="password"
-              className="block font-medium leading-6 text-gray-900"
-            >
-              {" "}
-              كلمة المرور{" "}
-            </label>
-            <div className="mt-2">
-              <input
-                type="password"
-                name="password"
-                id="password"
-                className="bg-gray-200 text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                // pattern="[ء-ي\s]+ [ء-ي\s]+ [ء-ي\s]+" // هذا النمط يسمح بإدخال الأحرف العربية فقط
-                title="الرجاء إدخال الاسم باللغة العربية ويجب أن يكون الأسم ثلاثى على الأقل"
-                required
-              />
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-gray-900/10 mt-10 mb-10"></div>
-        <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="address"
-              className="block font-medium leading-6 text-gray-900"
-            >
-              {" "}
-              العنوان الاساسى{" "}
-            </label>
-            <div className="mt-2">
-              <input
-                type="text"
-                name="address"
-                id="address"
-                autoComplete="address"
-                className="bg-gray-200 text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-                onChange={(e) => setAddress(e.target.value)}
-                value={address}
-                // pattern="[ء-ي\s]+ [ء-ي\s]+ [ء-ي\s]+" // هذا النمط يسمح بإدخال الأحرف العربية فقط
-                title="الرجاء إدخال الاسم باللغة العربية ويجب أن يكون الأسم ثلاثى على الأقل"
                 required
               />
             </div>
@@ -398,6 +329,80 @@ export default function SignUp() {
             </div>
           </div>
 
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="address"
+              className="block font-medium leading-6 text-gray-900"
+            >
+              {" "}
+              العنوان{" "}
+            </label>
+            <div className="mt-2">
+              <input
+                type="text"
+                name="address"
+                id="address"
+                autoComplete="address"
+                className="bg-gray-200 text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                onChange={(e) => setAddress(e.target.value)}
+                value={address}
+                // pattern="[ء-ي\s]+ [ء-ي\s]+ [ء-ي\s]+" // هذا النمط يسمح بإدخال الأحرف العربية فقط
+                title="الرجاء إدخال الاسم باللغة العربية ويجب أن يكون الأسم ثلاثى على الأقل"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="email"
+              className="block font-medium leading-6 text-gray-900"
+            >
+              {" "}
+              البريد الجامعي{" "}
+            </label>
+            <div className="mt-2">
+              <input
+                type="email"
+                name="email"
+                id="email"
+                autoComplete="email"
+                className="bg-gray-200 text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                // pattern=" " // هذا النمط يسمح بإدخال الأحرف العربية فقط
+                title="الرجاء إدخال الاسم باللغة العربية ويجب أن يكون الأسم ثلاثى على الأقل"
+                required
+                dir="ltr"
+              />
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="password"
+              className="block font-medium leading-6 text-gray-900"
+            >
+              {" "}
+              كلمة المرور{" "}
+            </label>
+            <div className="mt-2">
+              <input
+                type="password"
+                name="password"
+                id="password"
+                className="bg-gray-200 text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                // pattern="[ء-ي\s]+ [ء-ي\s]+ [ء-ي\s]+" // هذا النمط يسمح بإدخال الأحرف العربية فقط
+                title="الرجاء إدخال الاسم باللغة العربية ويجب أن يكون الأسم ثلاثى على الأقل"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-gray-900/10 mt-10 mb-8"></div>
+        <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-3">
             <label
               htmlFor="Area"
@@ -454,11 +459,39 @@ export default function SignUp() {
                 ))}
             </select>
           </div>
+
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="faculty"
+              className="font-medium leading-6 text-gray-900"
+            >
+              الكلية
+            </label>
+            <select
+              name="faculty"
+              id="faculty"
+              className="text-gray-700 mt-2 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+              value={faculty}
+              onChange={(e) => setFaculty(e.target.value)}
+              disabled={!selectedUniversityData} // تعطيل حقل نقطة التحرك إذا لم يتم اختيار منطقة
+              required
+            >
+              <option value="" disabled hidden>
+                اختر
+              </option>
+              {selectedUniversityData &&
+                selectedUniversityData.map((colleges: any, index: any) => (
+                  <option key={index} value={colleges.attributes.faculty_name}>
+                    {colleges.attributes.faculty_name}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
 
         <div className="border-t border-gray-900/10 mt-10">
-          <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-3 mt-5 ">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            {/* <div className="sm:col-span-3 mt-5 ">
               <label
                 htmlFor="university"
                 className="font-medium leading-6 text-gray-900"
@@ -501,40 +534,9 @@ export default function SignUp() {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
 
-            <div className="sm:col-span-3 mt-5 ">
-              <label
-                htmlFor="faculty"
-                className="font-medium leading-6 text-gray-900"
-              >
-                الكلية
-              </label>
-              <select
-                name="faculty"
-                id="faculty"
-                className="text-gray-700 mt-2 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-                value={faculty}
-                onChange={(e) => setFaculty(e.target.value)}
-                disabled={!selectedUniversityData} // تعطيل حقل نقطة التحرك إذا لم يتم اختيار منطقة
-                required
-              >
-                <option value="" disabled hidden>
-                  اختر
-                </option>
-                {selectedUniversityData &&
-                  selectedUniversityData.map((colleges: any, index: any) => (
-                    <option
-                      key={index}
-                      value={colleges.attributes.faculty_name}
-                    >
-                      {colleges.attributes.faculty_name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <div className="sm:col-span-3">
+            {/* <div className="sm:col-span-3">
               <label
                 htmlFor="academic_year"
                 className="font-medium leading-6 text-gray-900"
@@ -588,11 +590,11 @@ export default function SignUp() {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
           </div>
         </div>
 
-        <div className="mt-5">
+        <div className="mt-3">
           <label htmlFor="agree-terms" className="flex items-center">
             <input
               type="checkbox"

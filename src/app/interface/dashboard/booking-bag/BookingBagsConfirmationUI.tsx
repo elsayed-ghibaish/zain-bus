@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from "@/app/redux/store";
 import { AreaData } from "@/app/redux/features/strapi-0/AreaSlice";
 import { ControlData } from "@/app/redux/features/strapi-0/BookingControlsSlice";
 import { BookingBag } from "@/app/redux/features/strapi-0/BookingBagSlice";
+import { TiDeleteOutline } from "react-icons/ti";
 
 export default function BookingBagsConfirmationUI() {
   const [data2, setData]: any = useState([]);
@@ -72,27 +73,6 @@ export default function BookingBagsConfirmationUI() {
     setData(updatedData.filter((item: any) => item.id !== id));
   };
 
-  const sendWhatsAppMessage = (
-    name: string,
-    date: string,
-    phone: string,
-    prefix: string,
-    message: string
-  ) => {
-    const formattedDate =
-      date && format(parseISO(date), "eeee, d MMMM yyyy", { locale: ar });
-    const phoneNumber = `+20${phone}`;
-    const fullMessage = `مرحبا, ${name.split(" ")[0] || ""} ${
-      name.split(" ").pop() || ""
-    }
-${prefix}
-تاريخ الحجز: ${formattedDate} ${message}`;
-    const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
-      fullMessage
-    )}`;
-    window.open(url, "_blank");
-  };
-
   const PayBooking = async (id: any) => {
     try {
       const res = await axios.put(
@@ -121,38 +101,44 @@ ${prefix}
     }
   };
 
-  const ConfirmBooking = async (
-    id: any,
-    name: any,
-    date: any,
-    email: any,
-    price: number,
-    phone: string
-  ) => {
+  const ConfirmBooking = async (iteme: any) => {
     try {
       const res = await axios.put(
-        `${apiUrl}/booking-bags/${id}`,
+        `${apiUrl}/booking-bags/${iteme.id}`,
         { data: { trip_status: "confirmed" } },
         config
       );
-      handleResponse(res, "تم تأكيد الحجز بنجاح", id, data2);
+      handleResponse(res, "تم تأكيد الحجز بنجاح", iteme.id, data2);
       fetchData();
-      sendemail(id, name, date, email, price);
-      sendWhatsAppMessage(name, date, phone, "تم تاكيد حجزك بنجاح", "");
+      sendWhatsapp(iteme);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const RejectBooking = async (id: any) => {
+  const RejectBooking = async (item: any) => {
     if (confirm("هل أنت متاكد من إلغاء الحجز")) {
       try {
         const res = await axios.put(
-          `${apiUrl}/booking-bags/${id}`,
+          `${apiUrl}/booking-bags/${item.id}`,
           { data: { trip_status: "rejected" } },
           config
         );
-        handleResponse(res, "تم إلغاء الحجز بنجاح", id, data2);
+        handleResponse(res, "تم إلغاء الحجز بنجاح", item.id, data2);
+        fetchData();
+        RcjSendWhatsapp(item);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  // Delete booking-bags
+  const DeleteBooking = async (item: any) => {
+    if (confirm("هل أنت متاكد من حذف الحجز")) {
+      try {
+        const res = await axios.delete(`${apiUrl}/booking-bags/${item.id}`);
+        handleResponse(res, "تم حذف الرحلة بنجاح", item.id, data2);
         fetchData();
       } catch (error) {
         console.error(error);
@@ -160,31 +146,85 @@ ${prefix}
     }
   };
 
-  const sendemail = async (
-    id: any,
-    name: any,
-    date: any,
-    email: any,
-    price: number
-  ) => {
-    const dayBO =
-      date &&
-      format(parseISO(date), "eeee, d MMMM yyyy", {
+  const sendWhatsapp = async (item: any) => {
+    const bookingday =
+      item.attributes.date &&
+      format(parseISO(item.attributes.date), "eeee, d MMMM yyyy", {
         locale: ar,
       });
-    const res = await fetch("/api/send-email", {
-      method: "POST",
-      body: JSON.stringify({
-        subject: "تم تاكيد الحجز ",
-        amount: price,
-        email: email,
-        day: `تاريخ الحجز: ${dayBO}`,
-        massage: "تم تاكيد حجز توصيل الشنة بنجاح ",
-        fullName: `${name?.split(" ")[0] || ""} ${
-          name?.split(" ").pop() || ""
-        }`,
-      }),
-    });
+
+    const api_key = process.env.NEXT_PUBLIC_WHATSAPP_API_KEY;
+    const sender = process.env.NEXT_PUBLIC_WHATSAPP_SENDER;
+
+    const message = `
+ مرحبا *${item.attributes.first_name.split(" ")[0] || ""}*👋🏻،
+  ✅ *تم تاكيد حجز توصيل شنطتك بنجاح*
+  📅 *تاريخ الرحلة*: ${bookingday}
+  🛍 *نوع الشنطة*: ${item.attributes.bag_type}
+  📌 *نقطة التحرك*: ${item.attributes.start_point}
+  🕧 *معاد التحرك*: ${item.attributes.start_time}
+  📢 نرجو التواجد قبل معاد التحرك بـ 15 دقيقة 
+ *مع تحياتنا،*
+ zainbus.com
+    `;
+
+    try {
+      const response = await axios({
+        method: "POST",
+        url: "https://otp.metaphilia.com/api/send-message",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          api_key: api_key,
+          sender: sender,
+          number: `2${item.attributes.phone}`,
+          message: message,
+        },
+      });
+      console.log("Message sent successfully");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const RcjSendWhatsapp = async (item: any) => {
+    const bookingday =
+      item.attributes.date &&
+      format(parseISO(item.attributes.date), "eeee, d MMMM yyyy", {
+        locale: ar,
+      });
+
+    const api_key = process.env.NEXT_PUBLIC_WHATSAPP_API_KEY;
+    const sender = process.env.NEXT_PUBLIC_WHATSAPP_SENDER;
+
+    const message = `
+   *مرحبا* ${item.attributes.first_name.split(" ")[0] || ""}👋🏻،
+   ❌ *نأسف لإبلاغك بأنه تم إلغاء حجز توصيل شنطتك*
+   📅 *المقررة يوم*: ${bookingday} 
+    وذلك بسبب عدم استكمال عملية الدفع
+      *مع تحياتنا،*
+      zainbus.com
+    `;
+
+    try {
+      const response = await axios({
+        method: "POST",
+        url: "https://otp.metaphilia.com/api/send-message",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          api_key: api_key,
+          sender: sender,
+          number: `2${item.attributes.phone}`,
+          message: message,
+        },
+      });
+      console.log("Message sent successfully");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // valed
@@ -392,26 +432,6 @@ ${prefix}
           </div>
 
           <hr className="sm:col-span-2 md:col-span-6" />
-          {/* <div className="sm:col-span-2">
-            <label
-              htmlFor="checkboxesTwo"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              حسب الرحلة
-            </label>
-            <select
-              id="checkboxesTwo"
-              name="checkboxesTwo"
-              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-              value={selectedTypeOfTrip || ""}
-              onChange={handleTypeOfTripSelChange}
-            >
-              <option value="">اختر</option>
-              <option value="ذهاب">ذهاب</option>
-              <option value="عودة">عودة</option>
-              <option value="ذهاب وعودة">ذهاب وعودة</option>
-            </select>
-          </div> */}
 
           <div className="sm:col-span-2">
             <label
@@ -437,32 +457,6 @@ ${prefix}
               )}
             </select>
           </div>
-
-          {/* <div className="sm:col-span-2 md:col-span-2">
-          <span className="block text-sm font-medium leading-6 text-gray-900">
-            نهاية المحاضرة
-          </span>
-          {Control.data[0]?.attributes?.departure_time.map(
-            (Time_r: any, index: any) => (
-              <label
-                htmlFor={`checkboxes-5-${index}`}
-                key={index}
-                className="inline-flex items-center cursor-pointer m-1"
-              >
-                <input
-                  type="checkbox"
-                  id={`checkboxes-5-${index}`}
-                  name={`checkboxes-5-${index}`}
-                  className="mx-3 border shadow form-checkbox h-5 w-5 text-red-700 focus:ring-red-600 accent-red-600"
-                  value={Time_r.value || ""}
-                  checked={TimingEnd.includes(Time_r.value)}
-                  onChange={() => handleEndTimeChange(Time_r.value)}
-                />
-                {Time_r.label}
-              </label>
-            )
-          )}
-        </div> */}
 
           <hr className="sm:col-span-2 md:col-span-6" />
 
@@ -604,30 +598,25 @@ ${prefix}
                           : "غير مدفوعة"}
                       </td>
                       <td className="print:hidden">
-                        <button
-                          onClick={() => PayBooking(item.id)}
-                          className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
-                        >
-                          <FaAmazonPay title="تحويل الى مدفوعة" />
-                        </button>
-
-                        <button
-                          onClick={() => UnPayBooking(item.id)}
-                          className="bg-slate-100 text-slate-900 p-2 m-1 rounded hover:bg-slate-300"
-                        >
-                          <GiPayMoney title="تحويل الى غير مدفوعة" />
-                        </button>
+                        {!item.attributes.payment_status ? (
+                          <button
+                            onClick={() => PayBooking(item.id)}
+                            className="bg-red-500 text-white p-2 m-1 rounded hover:bg-red-600"
+                          >
+                            <FaAmazonPay title="تحويل الى مدفوعة" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => UnPayBooking(item.id)}
+                            className="bg-green-500 text-white p-2 m-1 rounded hover:bg-green-600"
+                          >
+                            <FaAmazonPay title="تحويل الى غير مدفوعة" />
+                          </button>
+                        )}
 
                         <button
                           onClick={() => {
-                            ConfirmBooking(
-                              item.id,
-                              item.attributes.first_name,
-                              item.attributes.date,
-                              item.attributes.email,
-                              item.attributes.trip_cost,
-                              item.attributes.phone
-                            );
+                            ConfirmBooking(item);
                           }}
                           className="bg-slate-100 text-white p-2 m-1 rounded hover:bg-slate-300"
                         >
@@ -641,10 +630,17 @@ ${prefix}
                         </Link>
 
                         <button
-                          onClick={() => RejectBooking(item.id)}
+                          onClick={() => RejectBooking(item)}
                           className="bg-slate-100 text-white p-2 m-1 rounded hover:bg-slate-300"
                         >
                           <FcCancel />
+                        </button>
+
+                        <button
+                          onClick={() => DeleteBooking(item)}
+                          className="bg-red-600 text-white p-2 m-1 rounded hover:bg-red-700"
+                        >
+                          <TiDeleteOutline title="حذف" />
                         </button>
                       </td>
                     </tr>

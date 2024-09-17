@@ -24,6 +24,7 @@ const PaymentPage = () => {
   const [phone, setPhone] = useState("");
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {
     const data = localStorage.getItem("booking");
@@ -254,10 +255,10 @@ const PaymentPage = () => {
       });
 
       if (res.ok) {
-        sendemail();
+        // sendemail();
+        sendWhatsapp();
         sendTelegramMessage();
         localStorage.setItem("booking-success", JSON.stringify(data_send));
-        sendWhatsapp();
         localStorage.removeItem("booking");
         router.replace("/pages/booking-success");
         toast.success("تم حجز الرحلة بنجاح");
@@ -339,10 +340,12 @@ const PaymentPage = () => {
       });
 
       if (res.ok) {
-        sendemail();
+        // sendemail();
+        sendWhatsapp();
         sendTelegramMessage();
         router.replace("/profile");
         toast.success("تم حجز توصيل الشنة بنجاح");
+        localStorage.setItem("booking-success", JSON.stringify(data_send_bag));
         localStorage.removeItem("booking");
       } else if (res.status === 500) {
         toast.error("غير مسموح بالحجز الرجاء الاتصال بإدارة الموقع");
@@ -366,11 +369,25 @@ const PaymentPage = () => {
       handleCardPayment();
     } else if (paymentMethod === "wallet") {
       handleWalletPayment();
-    } else if (paymentMethod === "VodafoneCash") {
-      handleCashPayment();
+    } else if (paymentMethod === "VodafoneCash" && !booking.bag_type) {
+      if (!isClicked) {
+        setIsClicked(true);
+        handleCashPayment();
+        // ضع هنا الكود الخاص بعملية الدفع
+        console.log("تم الضغط على الزر ومعالجة الدفع");
+      } else {
+        console.log("تم الضغط بالفعل");
+      }
       console.log("send booking data");
-    } else if (paymentMethod === ("VodafoneCash" && booking.bag_type)) {
-      handleSubmitBag();
+    } else if (paymentMethod === "VodafoneCash" && booking.bag_type) {
+      if (!isClicked) {
+        setIsClicked(true);
+        handleSubmitBag();
+        // ضع هنا الكود الخاص بعملية الدفع
+        console.log("تم الضغط على الزر ومعالجة الدفع");
+      } else {
+        console.log("تم الضغط بالفعل");
+      }
       console.log("send bag data");
     } else {
       toast.warning("برجاء اختيار طريقة دفع");
@@ -677,6 +694,7 @@ const PaymentPage = () => {
                   !selectedPaymentMethod ? "mt-5" : ""
                 } align-middle text-center select-none border font-bold whitespace-no-wrap rounded py-2 px-3 leading-normal no-underline bg-red-600 text-white hover:bg-red-500 waves-effect waves-light`}
                 onClick={() => handlePayment(selectedPaymentMethod)}
+                disabled={isClicked}
               >
                 {selectedPaymentMethod === "wallet" ||
                 selectedPaymentMethod === "credit_card" ||

@@ -160,6 +160,7 @@ export default function BookingUpdateUI(id: any) {
           seats,
           payment_type,
           trip_cost,
+          trip_status,
         },
       });
 
@@ -332,6 +333,32 @@ export default function BookingUpdateUI(id: any) {
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="trip_status"
+                  className="block font-medium leading-6 text-gray-900 mb-2"
+                >
+                  حالة الرحلة
+                </label>
+                <select
+                  name="trip_status"
+                  id="trip_status"
+                  className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                  value={trip_status}
+                  onChange={(e) => setTrip_status(e.target.value)}
+                  required
+                >
+                  <option value="" disabled hidden>
+                    اختر
+                  </option>
+                  <option value="pending">فى الانتظار</option>
+                  <option value="confirmed">مؤكدة</option>
+                  <option value="cancelled">ملغي</option>
+                  <option value="rejected">مرفوضة</option>
+                  <option value="completed">مكتملة</option>
                 </select>
               </div>
 

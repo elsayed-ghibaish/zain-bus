@@ -412,7 +412,7 @@ export default function BookingsUx({ Data }: any) {
 
             <div className="border-t border-gray-900/10 mt-3"></div>
             <div className="mt-3">
-              <h3>
+              <h3 className="font-bold text-lg">
                 <span className="text-lg text-red-500 font-bold">
                   تكلفة الرحلة :{" "}
                 </span>

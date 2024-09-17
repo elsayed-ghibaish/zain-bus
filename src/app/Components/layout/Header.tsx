@@ -34,7 +34,7 @@ export default function Header() {
                   src="/logo.svg"
                   width={933}
                   height={250}
-                  className="w-28"
+                  className="w-24"
                   alt="الزين للرحلات"
                 />
               </a>

@@ -226,67 +226,70 @@ export default function BookingBags({ Data }: any) {
 
   return (
     <section>
-      <form
-        id="form"
-        action=""
-        method="POST"
-        className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-5 lg:px-8"
-        onSubmit={handleSubmit}
-      >
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="bag_type"
-              className="block mb-3 font-medium leading-6 text-gray-900"
-            >
-              نوع الشنطة
-            </label>
-            <select
-              name="bag_type"
-              id="bag_type"
-              className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
-              value={bag_type}
-              onChange={(e) => setBag_Type(e.target.value)}
-              required
-            >
-              <option value="" disabled hidden>
-                اختر الشنطة
-              </option>
-              <option value="شنطة أكل صغيرة">شنطة أكل صغيرة</option>
-              <option value="شنطة سفر">شنطة سفر</option>
-              <option value="أخري">أخري</option>
-            </select>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label
-              htmlFor="date"
-              className="block mb-3 font-medium leading-6 text-gray-900"
-            >
-              تاريخ الرحلة
-            </label>
+      {GetData.attributes?.booking_status === true &&
+      availableDays.length > 0 &&
+      UserData.data.confirmed === true ? (
+        <form
+          id="form"
+          action=""
+          method="POST"
+          className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-5 lg:px-8"
+          onSubmit={handleSubmit}
+        >
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-3">
+              <label
+                htmlFor="bag_type"
+                className="block mb-3 font-medium leading-6 text-gray-900"
+              >
+                نوع الشنطة
+              </label>
               <select
-                name="date"
-                id="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                name="bag_type"
+                id="bag_type"
                 className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                value={bag_type}
+                onChange={(e) => setBag_Type(e.target.value)}
                 required
               >
                 <option value="" disabled hidden>
-                  اختر التاريخ
+                  اختر الشنطة
                 </option>
-                {availableDays.map((day: any) => (
-                  <option key={day.value} value={day.value}>
-                    {day.label}
-                  </option>
-                ))}
+                <option value="شنطة أكل صغيرة">شنطة أكل صغيرة</option>
+                <option value="شنطة سفر">شنطة سفر</option>
+                <option value="أخري">أخري</option>
               </select>
             </div>
-          </div>
 
-          <div className="sm:col-span-3">
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="date"
+                className="block mb-3 font-medium leading-6 text-gray-900"
+              >
+                تاريخ الرحلة
+              </label>
+              <div className="sm:col-span-3">
+                <select
+                  name="date"
+                  id="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                  required
+                >
+                  <option value="" disabled hidden>
+                    اختر التاريخ
+                  </option>
+                  {availableDays.map((day: any) => (
+                    <option key={day.value} value={day.value}>
+                      {day.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* <div className="sm:col-span-3">
             <label
               htmlFor="start_time_2"
               className="block mb-3 font-medium leading-6 text-gray-900"
@@ -305,7 +308,7 @@ export default function BookingBags({ Data }: any) {
                 اختر
               </option>
 
-              {/* <option value="">{GetDataMP?.attributes.time}</option> */}
+              <option value="">{GetDataMP?.attributes.time}</option>
 
               {GetDataMP?.attributes.timing.map((item: any, index: any) => {
                 if (index === 1) {
@@ -318,66 +321,120 @@ export default function BookingBags({ Data }: any) {
                 );
               })}
 
-              {/* {GetDataMP?.attributes.time.map((item: any, index: any) => (
+              {GetDataMP?.attributes.time.map((item: any, index: any) => (
                 <option key={index} value={item}>
                   {item}
                 </option>
-              ))} */}
+              ))}
             </select>
+          </div> */}
           </div>
-        </div>
-        <div className="border-t border-gray-900/10 mt-3"></div>
-        <div className="mt-3">
-          <h3>
-            <span className="text-red-500 font-medium">تكلفة الرحلة : </span>
-            {`${trip_cost ? trip_cost : "0"} ج.م`}
-          </h3>
-        </div>
-        <div className="border-t border-gray-900/10 mt-3"></div>
+          <div className="border-t border-gray-900/10 mt-3"></div>
+          <div className="mt-3">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              <span className="text-red-500 font-bold">تكلفة الرحلة : </span>
+              {`${trip_cost ? trip_cost : "0"} جنيهًا`}
+            </h3>
+          </div>
+          <div className="border-t border-gray-900/10 mt-3"></div>
 
-        <div className="mt-5">
-          <button
-            type="submit"
-            name="submit"
-            id="submit"
-            className="block w-full rounded-md px-3.5 py-2.5 text-center text-lg  text-white shadow-sm 
+          <div className="mt-5">
+            <button
+              type="submit"
+              name="submit"
+              id="submit"
+              className="block w-full rounded-md px-3.5 py-2.5 text-center text-lg  text-white shadow-sm 
              focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600
             bg-red-700 hover:bg-red-800"
-          >
-            {!loading ? "جاري إرسال البيانات..." : "متابعة الحجز"}
-            <LuSendHorizonal className="inline-block mr-3 mb-2 -rotate-45" />
-          </button>
+            >
+              {!loading ? "جاري إرسال البيانات..." : "متابعة الحجز"}
+              <LuSendHorizonal className="inline-block mr-3 mb-2 -rotate-45" />
+            </button>
+          </div>
+
+          {success && (
+            <div
+              className="mb-3 mt-5 inline-flex w-full items-center rounded-lg bg-green-100 px-6 py-5 text-base text-green-700"
+              role="alert"
+            >
+              <span className="mr-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-5 w-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
+              تم تسجيل الحجز بنجاح
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
+              {error}
+            </div>
+          )}
+        </form>
+      ) : (
+        <div className="lg:flex md:flex sm:block items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
+          {GetData.attributes?.booking_status === false ? (
+            <div className="container px-6 py-16 mx-auto text-center">
+              <div className="max-w-lg mx-auto">
+                <h1 className="text-3xl font-semibold text-red-600 lg:text-4xl">
+                  عذراً، الحجز مغلق حالياً
+                </h1>
+                <p className="mt-6 text-lg text-gray-500">
+                  {GetData.attributes?.notes}
+                </p>
+                <a
+                  href="/profile"
+                  className="px-5 py-2 mt-6 inline-block   font-medium leading-5 text-center text-white capitalize bg-red-600 rounded-lg hover:bg-red-700 lg:mx-0 lg:w-auto focus:outline-none"
+                >
+                  العودة الي حسابي
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {availableDays.length === 0 ? (
+                <div className="container px-6 py-16 mx-auto text-center">
+                  <div className="max-w-lg mx-auto">
+                    <h1 className="text-3xl font-semibold text-red-600 lg:text-4xl">
+                      عذراً، الحجز مغلق حالياً
+                    </h1>
+                    <p className="mt-6 text-lg text-gray-500">
+                      {GetData.attributes?.notes}
+                    </p>
+                    <a
+                      href="/profile"
+                      className="px-5 py-2 mt-6 inline-block   font-medium leading-5 text-center text-white capitalize bg-red-600 rounded-lg hover:bg-red-700 lg:mx-0 lg:w-auto focus:outline-none"
+                    >
+                      العودة الي حسابي
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                UserData.data.confirmed === false && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative max-w-md mx-auto mt-8">
+                    <strong className="font-bold">تنبيه!</strong>
+                    <span className="block sm:inline">
+                      {" "}
+                      حسابك موقوف. يرجى الاتصال بإدارة الموقع للمزيد من
+                      المعلومات.
+                    </span>
+                  </div>
+                )
+              )}
+            </div>
+          )}
         </div>
-
-        {success && (
-          <div
-            className="mb-3 mt-5 inline-flex w-full items-center rounded-lg bg-green-100 px-6 py-5 text-base text-green-700"
-            role="alert"
-          >
-            <span className="mr-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="h-5 w-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </span>
-            تم تسجيل الحجز بنجاح
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-red-500 text-white w-fit text-sm py-1 px-3 rounded-md mt-2">
-            {error}
-          </div>
-        )}
-      </form>
+      )}
     </section>
   );
 }

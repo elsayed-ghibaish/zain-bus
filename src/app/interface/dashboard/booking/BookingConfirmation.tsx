@@ -110,8 +110,8 @@ export default function BookingConfirmation() {
       );
       handleResponse(res, "تم تأكيد الحجز بنجاح", item.id, data2);
       fetchData();
-      sendemail(item);
       sendWhatsapp(item);
+      // sendemail(item);
     } catch (error) {
       console.error(error);
     }
@@ -407,15 +407,15 @@ export default function BookingConfirmation() {
     0
   );
 
-  if (Bookings.loading) {
-    return (
-      <img
-        src="/Spinner.svg"
-        className="flex m-auto items-center justify-center"
-        alt="loading"
-      />
-    );
-  }
+  // if (Bookings.loading) {
+  //   return (
+  //     <img
+  //       src="/Spinner.svg"
+  //       className="flex m-auto items-center justify-center"
+  //       alt="loading"
+  //     />
+  //   );
+  // }
   return (
     <div className="bg-slate-200">
       <div className="flex-1">

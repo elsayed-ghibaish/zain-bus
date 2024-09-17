@@ -163,13 +163,14 @@ export default function BagUpdateUI(id: any) {
           end_time,
           payment_type,
           trip_cost,
+          trip_status,
         },
       });
 
       if (res.status) {
         toast.success("تم تحديث الحجز بنجاح");
         setSuccess(true);
-        router.push("/dashboard/booking-confirmation");
+        router.push("/dashboard/baggage-confirmation");
       }
     } catch (error) {
       console.log("حدث خطأ أثناء التسجيل: ", error);
@@ -285,6 +286,32 @@ export default function BagUpdateUI(id: any) {
 
               <div className="sm:col-span-3">
                 <label
+                  htmlFor="trip_status"
+                  className="block font-medium leading-6 text-gray-900 mb-2"
+                >
+                  حالة الرحلة
+                </label>
+                <select
+                  name="trip_status"
+                  id="trip_status"
+                  className="text-gray-700 focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full focus:outline-red-500"
+                  value={trip_status}
+                  onChange={(e) => setTrip_status(e.target.value)}
+                  required
+                >
+                  <option value="" disabled hidden>
+                    اختر
+                  </option>
+                  <option value="pending">فى الانتظار</option>
+                  <option value="confirmed">مؤكدة</option>
+                  <option value="cancelled">ملغي</option>
+                  <option value="rejected">مرفوضة</option>
+                  <option value="completed">مكتملة</option>
+                </select>
+              </div>
+
+              {/* <div className="sm:col-span-3">
+                <label
                   htmlFor="paymenttype"
                   className="block font-medium leading-6 text-gray-900 mb-2"
                 >
@@ -308,7 +335,7 @@ export default function BagUpdateUI(id: any) {
                     <option value="MasterCard">MasterCard</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="border-t border-gray-900/10 mt-3"></div>
             <div className="mt-3">

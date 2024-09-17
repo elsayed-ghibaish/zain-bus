@@ -261,8 +261,8 @@ export default function PrintBookingBagsUi() {
       <div className="bg-slate-50 border-2 border-white shadow-sm rounded-b-lg p-5 print:rounded-none print:border-none print:p-0 print:shadow-none">
         <div className="overflow-hidden rounded-t-lg">
           <table className="table-fixed w-full whitespace-nowrap overflow-auto lg:inline-table md:flow-root sm:inline-table flow-root">
-            <thead className="bg-slate-300 text-slate-700">
-              <tr className="*:p-3 *:border-l *:font-bold text-sm">
+            <thead className="bg-red-700 text-white">
+              <tr className="*:p-3 *:border-l *:font-bold">
                 <th className="w-10">م</th>
                 <th className="w-52">الاسم</th>
                 <th>نوع الشنطة</th>
@@ -281,7 +281,7 @@ export default function PrintBookingBagsUi() {
                   const firstName =
                     item.attributes.first_name
                       ?.split(" ")
-                      .slice(0, 3)
+                      .slice(0,2)
                       .join(" ") || [];
                   const lastName =
                     item.attributes.last_name?.split(" ").pop() || "";

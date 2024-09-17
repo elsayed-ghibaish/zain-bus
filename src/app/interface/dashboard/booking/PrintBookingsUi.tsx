@@ -262,7 +262,7 @@ export default function PrintBookingsUi() {
               <IoIosCall size={20} className="inline mb-1 text-red-600 mr-2" />
             </span>
             <span className="block">
-              zain-bus.vercel.app{" "}
+              zainbus.com{" "}
               <FaEdge size={20} className="inline mb-1 text-red-600 mr-2" />
             </span>
           </div>
@@ -515,7 +515,7 @@ export default function PrintBookingsUi() {
                   const firstName =
                     item.attributes.first_name
                       ?.split(" ")
-                      .slice(0, 3)
+                      .slice(0, 4)
                       .join(" ") || [];
                   const lastName =
                     item.attributes.last_name?.split(" ").pop() || "";

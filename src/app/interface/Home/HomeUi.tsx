@@ -105,7 +105,7 @@ export default function HomeUi() {
                   </div>
                 </div>
               </div>
-              <div className="group relative bg-gray-50 transition-shadow hover:z-[1] hover:shadow-2xl lg:hidden">
+              {/* <div className="group relative bg-gray-50 transition-shadow hover:z-[1] hover:shadow-2xl lg:hidden">
                 <div className="relative space-y-8 p-8 py-12  text-center transition duration-300 group-hover:bg-white">
                   <FaSuitcase className="text-6xl text-red-600 m-auto" />
 
@@ -118,7 +118,7 @@ export default function HomeUi() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>

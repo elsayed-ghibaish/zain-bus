@@ -130,7 +130,7 @@ export default function ControlBooking({ Data, Etid }: any) {
             <span className="flex items-center mb-3">
               <span className="h-px flex-1 bg-slate-200"></span>
               <span className="px-3 font-medium text-red-700">
-                تعديل حجز الرحلات
+                تعديل {booking_name}
               </span>
               <span className="h-px flex-1 bg-slate-200"></span>
             </span>

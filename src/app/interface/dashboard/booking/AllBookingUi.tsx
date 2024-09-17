@@ -24,6 +24,7 @@ import { ControlData } from "@/app/redux/features/strapi-0/BookingControlsSlice"
 import { IoIosCall } from "react-icons/io";
 import PrintBookingBagsUi from "../booking-bag/PrintBookingBagsUi";
 import { GiPayMoney } from "react-icons/gi";
+import { TiDeleteOutline } from "react-icons/ti";
 
 export default function AllBookingUi() {
   const [isOpen, setIsOpen] = useState(false);
@@ -225,6 +226,22 @@ export default function AllBookingUi() {
     }
   };
 
+  // Delete
+
+  const DeleteBooking = async (id: any) => {
+    if (confirm("هل أنت متاكد من حذف الحجز")) {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_STRAPI_URL_API;
+        const res = await axios.delete(`${apiUrl}/bookings/${id}`);
+        const updatedData = datatwo.filter((item: any) => item.id !== id);
+        setdatatwo(updatedData);
+        fetchData();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   // فلترة البيانات واستبعاد التي لا تستوفي الشرط
   const filteredData = Bookings.data.filter((item: any) => {
     // تحقق من التاريخ
@@ -353,24 +370,17 @@ export default function AllBookingUi() {
                 aria-label="logo"
                 className="flex space-x-2 items-center mb-3"
               >
-                <img src="/logo-0.svg" className="w-6" alt="الزين للرحلات" />
-                <span className="text-2xl font-bold text-red-700 dark:text-white">
-                  <img
-                    src="/logo-1.svg"
-                    className="w-36 mt-5 mr-4"
-                    alt="Zain Travel"
-                  />
-                </span>
+                <img src="/logo.svg" className="w-32" alt="الزين للرحلات" />
               </div>
             </div>
           </div>
-          <div className=" justify-end">
+          <div className="justify-end text-left">
             <span className="block mr-3">
               01012930010{" "}
               <IoIosCall size={20} className="inline mb-1 text-red-600 mr-2" />
             </span>
             <span className="block">
-              zaintravel.com{" "}
+              zainbus.com{" "}
               <FaEdge size={20} className="inline mb-1 text-red-600 mr-2" />
             </span>
           </div>
@@ -728,6 +738,21 @@ export default function AllBookingUi() {
                               <FcCancel title="إلغاء الوصول" />
                             </button>
                           )}
+
+                          <Link
+                            href={`/dashboard/booking-update/${item.id}?id`}
+                          >
+                            <ol className="bg-slate-100 p-2  rounded hover:bg-slate-300 text-gray-800 inline-flex">
+                              <HiPencilAlt />
+                            </ol>
+                          </Link>
+
+                          <button
+                            onClick={() => DeleteBooking(item.id)}
+                            className="bg-red-600 text-white p-2 m-1 rounded hover:bg-red-700"
+                          >
+                            <TiDeleteOutline title="حذف" />
+                          </button>
                         </td>
                       </tr>
                     );

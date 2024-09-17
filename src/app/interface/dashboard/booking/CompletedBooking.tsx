@@ -294,14 +294,7 @@ export default function CompletedBooking() {
                 aria-label="logo"
                 className="flex space-x-2 items-center mb-3"
               >
-                <img src="/logo-0.svg" className="w-6" alt="الزين للرحلات" />
-                <span className="text-2xl font-bold text-red-700 dark:text-white">
-                  <img
-                    src="/logo-1.svg"
-                    className="w-36 mt-5 mr-4"
-                    alt="Zain Travel"
-                  />
-                </span>
+                <img src="/logo.svg" className="w-32" alt="الزين للرحلات" />
               </div>
             </div>
           </div>
