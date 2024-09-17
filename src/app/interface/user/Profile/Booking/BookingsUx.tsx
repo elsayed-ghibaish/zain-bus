@@ -233,6 +233,7 @@ export default function BookingsUx({ Data }: any) {
     e.preventDefault();
 
     localStorage.removeItem("booking");
+    localStorage.removeItem("booking-success");
     localStorage.setItem("booking", JSON.stringify(data_send));
     toast.success("تم إضافة الحجز للدفع");
     router.replace("/cart");

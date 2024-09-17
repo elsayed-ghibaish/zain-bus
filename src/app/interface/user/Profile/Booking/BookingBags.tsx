@@ -219,6 +219,7 @@ export default function BookingBags({ Data }: any) {
       return;
     }
     localStorage.removeItem("booking");
+    localStorage.removeItem("booking-success");
     localStorage.setItem("booking", JSON.stringify(data_send_bag));
     toast.success("تم اضافة الحجز لقائمة الدفع");
     router.replace("/cart");
