@@ -11,8 +11,10 @@ import { BsBox, BsCalendar, BsClock } from "react-icons/bs";
 import { HiUsers } from "react-icons/hi";
 import { MdMergeType } from "react-icons/md";
 import { FaUserGraduate } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export default function PaySuccess() {
+  const { data: session }: any = useSession();
   const [booking, setBooking] = useState<any>();
   const [loading, setLoading] = useState(false);
 
@@ -154,12 +156,21 @@ export default function PaySuccess() {
         </div>
 
         <div className="flex flex-col items-center justify-center px-5 mt-4">
-          <Link
-            href="/pages/booking-guest"
-            className="p-2 my-6 text-white rounded-md bg-red-600"
-          >
-            حجز رحلة جديدة
-          </Link>
+          {!session ? (
+            <Link
+              href="/pages/booking-guest"
+              className="p-2 my-6 text-white rounded-md bg-red-600"
+            >
+              حجز رحلة جديدة
+            </Link>
+          ) : (
+            <Link
+              href="/profile"
+              className="p-2 my-6 text-white rounded-md bg-red-600"
+            >
+              العودة إلى حسابي
+            </Link>
+          )}
         </div>
       </div>
     </section>

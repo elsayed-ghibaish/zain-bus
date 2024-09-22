@@ -18,7 +18,7 @@ export async function middleware(req: NextRequest) {
   // Protect /profile route for any logged-in user
   if (url.startsWith("/profile")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/", req.url));
+      return NextResponse.redirect(new URL("/sign-in", req.url));
     }
   }
 

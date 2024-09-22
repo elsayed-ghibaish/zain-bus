@@ -81,6 +81,22 @@ export default function Header() {
                   </li>
                   <li>
                     <a
+                      href="/profile"
+                      className="block md:px-4 transition hover:text-red-700"
+                    >
+                      <span>حجز الطلاب</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/pages/booking-guest"
+                      className="block md:px-4 transition hover:text-red-700"
+                    >
+                      <span>حجز الزوار</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
                       href="/pages/about"
                       className="block md:px-4 transition hover:text-red-700"
                     >
@@ -95,14 +111,7 @@ export default function Header() {
                       <span>وجهتنا</span>
                     </a>
                   </li>
-                  <li>
-                    <a
-                      href="/pages/booking-guest"
-                      className="block md:px-4 transition hover:text-red-700"
-                    >
-                      <span>حجز زائر</span>
-                    </a>
-                  </li>
+                  
                   <li>
                     <a
                       href="/pages/contact-us"

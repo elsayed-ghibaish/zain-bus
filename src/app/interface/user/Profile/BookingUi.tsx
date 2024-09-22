@@ -107,6 +107,7 @@ export default function BookingUI() {
       label: format(day, "EEEE, d MMMM yyyy", { locale: ar }),
     }));
 
+  // console.log(UserData)
   // يمكن استخدام availableDays حسب الحاجة
 
   if (ControlsData.loading) {
@@ -161,11 +162,17 @@ export default function BookingUI() {
                   href="/"
                 >
                   <span className="sr-only">Home</span>
-                  <img src="/logo.svg" className="h-16" alt="Zain Travel" />
+                  <img
+                    src={`${
+                      UserData?.data.photo?.formats?.small.url || "/avatar.webp"
+                    }`}
+                    className="h-16"
+                    alt={UserData.data.username}
+                  />
                 </a>
 
                 <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
-                  احجز رحلتك القادمة
+                  {UserData.data.username}
                 </h1>
 
                 <p className="mt-4 leading-relaxed text-gray-500">
