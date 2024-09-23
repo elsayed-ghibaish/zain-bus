@@ -26,6 +26,12 @@ export default function Footer() {
               </a>
               <a
                 className="inline-block rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                href="/pages/about"
+              >
+                عن الزين
+              </a>
+              <a
+                className="inline-block rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                 href="/pages/policy"
               >
                 الشروط والأحكام

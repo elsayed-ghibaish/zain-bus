@@ -95,14 +95,14 @@ export default function Header() {
                       <span>حجز الزوار</span>
                     </a>
                   </li>
-                  <li>
+                  {/* <li>
                     <a
                       href="/pages/about"
                       className="block md:px-4 transition hover:text-red-700"
                     >
                       <span>عن الزين</span>
                     </a>
-                  </li>
+                  </li> */}
                   <li>
                     <a
                       href="/pages/destination"
